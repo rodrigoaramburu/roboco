@@ -85,7 +85,6 @@ public class Robo {
     public void update() {
         
         if(this.currentAction != null){
-
             float actionPart = this.velocity * Gdx.graphics.getDeltaTime();
 
             if(this.currentAction == RoboAction.MOVING && this.actionProgress > 0){

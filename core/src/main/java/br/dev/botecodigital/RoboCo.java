@@ -1,14 +1,15 @@
 package br.dev.botecodigital;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import br.dev.botecodigital.robo.Robo;
+import br.dev.botecodigital.socket.SocketCommandRequest;
+import br.dev.botecodigital.socket.SocketCommandResponse;
+import br.dev.botecodigital.socket.SocketController;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 
@@ -18,6 +19,7 @@ public class RoboCo extends Game {
     
     private Robo robo;
     private FitViewport viewport;
+    private SocketController socketController;
 
     @Override
     public void create() {
@@ -30,6 +32,9 @@ public class RoboCo extends Game {
         batch = new SpriteBatch();
         
         robo = new Robo();
+
+        socketController = new SocketController();
+        socketController.startServer();
     }
 
     @Override
@@ -39,16 +44,20 @@ public class RoboCo extends Game {
 
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-
-
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && !robo.isExecutingAction()){
-            robo.move( () -> { Gdx.app.log("MOVE", "Mover Finalizado");} );
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && !robo.isExecutingAction()){
-            robo.turnLeft(() -> { Gdx.app.log("MOVE", "Virar Esquerda Finalizado");});
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && !robo.isExecutingAction()){
-            robo.turnRight( () -> { Gdx.app.log("MOVE", "Virar Direita Finalizado"); } );
+            
+        SocketCommandRequest command = socketController.readCommand();
+        
+        if(command != null){
+        
+            if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.MOVE)){
+                robo.move( () -> {  socketController.send(SocketCommandResponse.success("movido!"));} );
+            }
+            if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_LEFT)){
+                robo.turnLeft(() -> { socketController.send(SocketCommandResponse.success("viara esquerda!"));} );
+            }
+            if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_RIGHT)){
+                robo.turnRight(() -> { socketController.send(SocketCommandResponse.success("virar direita!"));} );
+            }
         }
 
         robo.update();
