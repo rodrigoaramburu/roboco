@@ -29,10 +29,13 @@ public class SocketController {
 
     private Status status;
 
-    private String clientIP;
-    private String clientUsername;
+    private String clientIP = "";
+    private String clientUsername = "";
     private Socket client;
     private Thread threadListening;
+
+    private SocketListener onConnectedAction;
+    private SocketListener onDisconnectedAction;
 
 
     public enum Status{
@@ -71,6 +74,7 @@ public class SocketController {
                 processSetUsernameCommand();
                 
                 this.status = Status.CONNECTECTED;
+                this.onConnectedAction.handle();
                 
                 String commandString;
                 SocketCommandRequest command;
@@ -148,11 +152,17 @@ public class SocketController {
 
     private boolean isDisconnectCommand(SocketCommandRequest command){
         if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.DISCONNECT)){
-            send(SocketCommandResponse.success("Disconnected!"));
+            this.send(SocketCommandResponse.success("Disconnected!"));
             disconnect();
+            this.onDisconnectedAction.handle();
             return true;
         }
         return false;
+    }
+
+    public void send(SocketCommandResponse message){
+        out.println(this.json.toJson(message));
+        out.flush();
     }
 
     public Status getStatus(){
@@ -165,8 +175,15 @@ public class SocketController {
         return clientUsername;
     }
 
-    public void send(SocketCommandResponse message){
-        out.println(this.json.toJson(message));
-        out.flush();
+    public boolean isConnected(){
+        return this.client != null;
     }
+
+    public void setOnConnectedAction(SocketListener socketListener){
+        this.onConnectedAction = socketListener;
+    }
+    public void setOnDisconnectedAction(SocketListener socketListener){
+        this.onDisconnectedAction = socketListener;
+    }
+
 }

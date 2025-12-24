@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Robo {
 
+    private static final double DELAY_BETWEEN_ACTION = -0.5;
+    
     private Sprite sprite;
     private Texture texture;
 
@@ -33,13 +35,13 @@ public class Robo {
     } 
    
 
-    public Robo(){
+    public Robo(float x, float y, Direction direction){
         this.texture = new Texture("robo/robo-sprite.png");
         frames = TextureRegion.split(texture, 50, 50);
 
-        this.direction = Direction.UP;
+        this.direction = direction;
         this.sprite = new Sprite(this.frames[0][0]);
-        this.sprite.setPosition(0, 0);
+        this.sprite.setPosition(x, y);
         this.sprite.setSize(1, 1);
     }
 
@@ -93,7 +95,7 @@ public class Robo {
 
             actionProgress -= actionPart;
                 
-            if(this.actionProgress < 0){
+            if(this.actionProgress < DELAY_BETWEEN_ACTION){
                 finalizeAction();
             }
         }
