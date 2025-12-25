@@ -45,8 +45,15 @@ class RobocoClient{
        return $this->sendRawCommand(['target'=>'ROBO','command'=>'TURN_RIGHT']);
     }
 		
-	public function disconnect(): void{
+	public function disconnect(): void
+	{
 		$this->sendRawCommand(['target'=>'SYSTEM', 'command'=>'DISCONNECT']);
+	}
+
+	public function finish(): bool
+	{
+		$response = $this->sendRawCommand(['target'=>'SYSTEM', 'command'=>'FINISH']);
+		return $response['status'] == 'SUCCESS';
 	}
 		
 }

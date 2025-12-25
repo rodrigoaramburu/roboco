@@ -8,4 +8,4 @@ $roboco = new RobocoClient('rodrigo');
 
 $roboco->roboMove();
 $roboco->roboMove();
-$roboco->disconnect();
+$roboco->finish();

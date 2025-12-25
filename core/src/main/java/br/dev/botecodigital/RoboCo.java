@@ -15,7 +15,7 @@ public class RoboCo extends Game {
     @Override
     public void create() {
         AssetManager.load();
-        setScreen( new LevelScreen(this, new BasicLevel04()));
+        setScreen( new LevelScreen(this, new BasicLevel03()));
     }
 
     @Override

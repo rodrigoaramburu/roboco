@@ -6,7 +6,7 @@
 [x] Criar mecanismo para receber comandos via socket
 [x] Criar classe de cenário
 [x] Tratar colisão do robo com objetos do cenário
-[ ] Criar critério de finalização
+[x] Criar critério de finalização
 [ ] Criar tela de abertura
 
 ## Socket API
@@ -26,6 +26,10 @@ O primeito comando a ser passado é:
 { target: "ROBO", command: "TURN_RIGHT"}
 
 ### Comando para o sistema
+
+{ target: "SYSTEM", command: "FINISH"}
+
+Finaliza o level, retornando se o level foi concluido ou não.
 
 { target: "SYSTEM", command: "DISCONNECT"}
 

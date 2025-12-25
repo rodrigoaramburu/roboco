@@ -14,4 +14,4 @@ $roboco->roboMove();
 $roboco->roboTurnLeft();
 $roboco->roboMove();
 $roboco->roboMove();
-$roboco->disconnect();
+$roboco->finish();

@@ -13,7 +13,8 @@ public class SocketCommandRequest {
 
     public enum SystemCommand{
         SETUSERNAME, 
-        DISCONNECT
+        DISCONNECT, 
+        FINISH
     }
     public enum RoboCommand{
         MOVE,

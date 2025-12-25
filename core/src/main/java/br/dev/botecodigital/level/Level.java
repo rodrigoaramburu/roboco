@@ -3,6 +3,7 @@ package br.dev.botecodigital.level;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+import br.dev.botecodigital.robo.Robo;
 import br.dev.botecodigital.robo.Robo.Direction;
 
 public abstract class Level {
@@ -13,7 +14,23 @@ public abstract class Level {
      * @return Tile[][]
      */
     public abstract Tile[][] getFloor(); 
+
+    /**
+     * Retorna uma matriz onde o primeiro indice representa a linha no caso o eixo Y do mundo e
+     * o segundo indice representa a coluna no caso o eixo X do mundo.
+     * @return Tile[][]
+     */
     public abstract Tile[][] getWalls(); 
+
+    public abstract String getName();
+
+    public abstract String getDescription();
+
+    public abstract Vector2 getRoboInitialPosition();
+
+    public abstract Direction getRoboDirection();
+
+    public abstract boolean isFinished(Robo robo);
 
 
     public void render(SpriteBatch batch){
@@ -50,12 +67,6 @@ public abstract class Level {
 
     }
 
-    public abstract String getName();
 
-    public abstract String getDescription();
-
-    public abstract Vector2 getRoboInitialPosition();
-
-    public abstract Direction getRoboDirection();
 
 }

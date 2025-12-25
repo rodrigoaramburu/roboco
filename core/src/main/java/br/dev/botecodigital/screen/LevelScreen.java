@@ -136,6 +136,8 @@ public class LevelScreen implements Screen {
             processIfRoboTurnLeft(command);
 
             processIfRoboTurnRight(command);
+
+            processIfFinished(command);
         }
     }
 
@@ -166,6 +168,18 @@ public class LevelScreen implements Screen {
                 this.dialogBoxText = "";
             });
             this.dialogBoxText = "Avançando...";
+        }
+    }
+
+    private void processIfFinished(SocketCommandRequest command) {
+        if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.FINISH) ){
+            if(this.level.isFinished(this.robo)){
+                status = LevelStatus.WIN;
+                socketController.send(SocketCommandResponse.success("LEVEL.WIN", "Você venceu!!!"));
+            }else{
+                status = LevelStatus.LOSE;
+                socketController.send(SocketCommandResponse.error("LEVEL.LOSE", "Não foi desta vez."));
+            }
         }
     }
 

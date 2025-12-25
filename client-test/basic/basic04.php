@@ -15,4 +15,9 @@ $roboco->roboMove();
 $roboco->roboMove();
 $roboco->roboTurnRight();
 $roboco->roboMove();
-$roboco->disconnect();
+
+if($roboco->finish()){
+    echo "Ganhei!!!\n";
+}else{
+    echo "Perdi!!!\n";
+}

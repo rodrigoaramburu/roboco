@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import br.dev.botecodigital.level.Level;
 import br.dev.botecodigital.level.Tile;
+import br.dev.botecodigital.robo.Robo;
 import br.dev.botecodigital.robo.Robo.Direction;
 
 public class BasicLevel01 extends Level {
@@ -60,6 +61,11 @@ public class BasicLevel01 extends Level {
     @Override
     public String getDescription() {
         return "Chegue no ponto X";
+    }
+
+    @Override
+    public boolean isFinished(Robo robo) {
+        return robo.getX() == 6 && robo.getY() == 5;
     }
 
 
