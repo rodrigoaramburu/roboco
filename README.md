@@ -5,7 +5,7 @@
 [x] Criar classe esboço Robo com movimentação
 [x] Criar mecanismo para receber comandos via socket
 [x] Criar classe de cenário
-[ ] Tratar colisão do robo com objetos do cenário
+[x] Tratar colisão do robo com objetos do cenário
 [ ] Criar critério de finalização
 [ ] Criar tela de abertura
 
@@ -34,4 +34,4 @@ O primeito comando a ser passado é:
 
 Todo comando gerará um resposta.
 
-{ status: "<SUCCESS|ERROR>", messge: "<messge>"}
+{ status: "<SUCCESS|ERROR>", codigo: "<codigo>", messge: "<messge>"}

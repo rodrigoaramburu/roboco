@@ -31,7 +31,8 @@ public class Robo {
 
     private enum RoboAction{
         MOVING,
-        TURNING
+        TURNING,
+        COLLIDING
     } 
    
 
@@ -48,7 +49,9 @@ public class Robo {
     public void render(SpriteBatch batch){
         this.sprite.setRegion( this.frames[0][this.direction.ordinal()]);
         this.sprite.setSize(1, 1);
+        this.sprite.translate(2, 2);
         this.sprite.draw(batch);
+        this.sprite.translate(-2, -2);
     }
 
     public void move(FinishRoboAction finishRoboAction){
@@ -84,6 +87,14 @@ public class Robo {
         this.actionProgress = 1f;
     }
 
+    public void colide(FinishRoboAction finishRoboAction) {
+        if(this.isExecutingAction()) return;
+        this.currentAction = RoboAction.COLLIDING;
+        this.finishRoboAction = finishRoboAction;
+        this.actionProgress = 1f;
+
+    }
+
     public void update() {
         
         if(this.currentAction != null){
@@ -91,6 +102,10 @@ public class Robo {
 
             if(this.currentAction == RoboAction.MOVING && this.actionProgress > 0){
                 handleRobotMoveAction(actionPart);
+            }
+
+            if(this.currentAction == RoboAction.COLLIDING && this.actionProgress > 0){
+                handleRobotCollidingAction(actionPart);
             }
 
             actionProgress -= actionPart;
@@ -124,15 +139,42 @@ public class Robo {
         
     }
 
+    private void handleRobotCollidingAction(float actionPart) {
+
+        int factor = 1;
+        if(this.actionProgress < 0.2f) factor = 1; else
+        if(this.actionProgress < 0.4f) factor = -1; else
+        if(this.actionProgress < 0.6f) factor = 1; else
+        if(this.actionProgress < 0.8f) factor = -1; 
+        
+        if(this.direction == Direction.UP){
+            this.sprite.translateY(actionPart * factor);
+        }else if(this.direction == Direction.DOWN){
+            this.sprite.translateY(-actionPart * factor);                
+        }else if(this.direction == Direction.LEFT){
+            this.sprite.translateX(-actionPart * factor);  
+        }else{
+            this.sprite.translateX(actionPart * factor);                
+        }
+        
+    }
+
     public boolean isExecutingAction(){
         return this.currentAction != null;
+    }
+
+    public float getX() {
+        return this.sprite.getX();
+    }
+    public float getY() {
+        return this.sprite.getY();
+    }
+
+    public Direction getDiretion() {
+        return this.direction;
     }
 
     public void dispose(){
         this.texture.dispose();
     }
-
-
-
-
 }

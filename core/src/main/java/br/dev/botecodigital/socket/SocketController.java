@@ -82,7 +82,7 @@ public class SocketController {
                     command = this.parseCommand(commandString);
 
                     if(!command.isValid()){
-                        send(SocketCommandResponse.error("Invalid command"));
+                        send(SocketCommandResponse.error("SOCKET.INVALID_COMMAND","Invalid command"));
                         continue;
                     }
 
@@ -96,7 +96,8 @@ public class SocketController {
                 e.printStackTrace();
                 this.disconnect();
             }catch(SocketException e){
-                this.send(SocketCommandResponse.error("Username not set"));
+                e.printStackTrace();
+                this.send(SocketCommandResponse.error("SYSTEM.USERNAME_NOT_SET","Username not set"));
                 this.disconnect();
             }
         });
@@ -144,7 +145,7 @@ public class SocketController {
         if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.SETUSERNAME)){
             this.clientIP = this.client.getRemoteAddress();
             this.clientUsername = command.getValue();
-            this.send(SocketCommandResponse.success("Username \""+this.clientUsername+"\" was set successfully"));
+            this.send(SocketCommandResponse.success("SYSTEM.USERNAME_SETTED","Username \""+this.clientUsername+"\" was set successfully"));
         }else{
             throw new SocketException("Username not set");
         }
@@ -152,7 +153,7 @@ public class SocketController {
 
     private boolean isDisconnectCommand(SocketCommandRequest command){
         if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.DISCONNECT)){
-            this.send(SocketCommandResponse.success("Disconnected!"));
+            this.send(SocketCommandResponse.success("SOCKET.DISCONNECTED","Disconnected!"));
             disconnect();
             this.onDisconnectedAction.handle();
             return true;

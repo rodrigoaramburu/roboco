@@ -18,8 +18,6 @@ public class RoboCo extends Game {
         setScreen( new LevelScreen(this, new BasicLevel04()));
     }
 
-
-
     @Override
     public void dispose(){
         AssetManager.dispose();

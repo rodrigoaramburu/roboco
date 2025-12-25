@@ -57,8 +57,8 @@ public class LevelScreen implements Screen {
         this.batch = new SpriteBatch();
         
         this.robo = new Robo(
-            this.level.getRoboInitialPosition().x + 2, 
-            this.level.getRoboInitialPosition().y + 2,
+            this.level.getRoboInitialPosition().x, 
+            this.level.getRoboInitialPosition().y,
             this.level.getRoboDirection()
         );
         
@@ -74,7 +74,7 @@ public class LevelScreen implements Screen {
         this.camera.update();
         this.batch.setProjectionMatrix(camera.combined);
             
-        processInput();
+        this.processInput();
 
         this.robo.update();
 
@@ -131,28 +131,55 @@ public class LevelScreen implements Screen {
         SocketCommandRequest command = socketController.readCommand();
         
         if(command != null){        
-            if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.MOVE)){
-                this.robo.move( () -> {  
-                    socketController.send(SocketCommandResponse.success("movido!"));
-                    this.dialogBoxText = "";
-                });
-                this.dialogBoxText = "Avançando...";
-            }
-            if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_LEFT)){
-                this.robo.turnLeft(() -> { 
-                    socketController.send(SocketCommandResponse.success("viara esquerda!"));
-                    this.dialogBoxText = "";
-                });
-                this.dialogBoxText = "Virando Esquerda...";
-            }
-            if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_RIGHT)){
-                this.robo.turnRight(() -> { 
-                    socketController.send(SocketCommandResponse.success("virar direita!"));
-                    this.dialogBoxText = "";
-                });
-                this.dialogBoxText = "Virando Direita...";
-            }
+            processIfRoboMoveAction(command);
+
+            processIfRoboTurnLeft(command);
+
+            processIfRoboTurnRight(command);
         }
+    }
+
+    private void processIfRoboTurnRight(SocketCommandRequest command) {
+        if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_RIGHT)){
+            this.robo.turnRight(() -> { 
+                socketController.send(SocketCommandResponse.success("ROBO.ACTION_OK","Robo virou a direita."));
+                this.dialogBoxText = "";
+            });
+            this.dialogBoxText = "Virando Direita...";
+        }
+    }
+
+    private void processIfRoboTurnLeft(SocketCommandRequest command) {
+        if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_LEFT)){
+            this.robo.turnLeft(() -> { 
+                socketController.send(SocketCommandResponse.success("ROBO.ACTION_OK", "Robo virou a esquerda."));
+                this.dialogBoxText = "";
+            });
+            this.dialogBoxText = "Virando Esquerda...";
+        }
+    }
+
+    private void processIfRoboMoveAction(SocketCommandRequest command) {
+        if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.MOVE) && this.canMove() ){
+            this.robo.move( () -> {  
+                socketController.send(SocketCommandResponse.success("ROBO.ACTION_OK","Robo moveu para frente."));
+                this.dialogBoxText = "";
+            });
+            this.dialogBoxText = "Avançando...";
+        }
+    }
+
+    public boolean canMove(){
+
+        if(!this.level.canMove(this.robo.getX(), this.robo.getY(), this.robo.getDiretion())){
+            this.robo.colide( () ->{
+                status = LevelStatus.LOSE;
+                socketController.send(SocketCommandResponse.error("ROBO.COLLID","Colidiu!"));
+                socketController.disconnect();
+            });
+        }
+
+        return true;
     }
 
     @Override
