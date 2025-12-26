@@ -6,5 +6,8 @@ include('../ClientRoboco.php');
 
 $roboco = new RobocoClient('rodrigo');
 
-$roboco->roboMove();
-$roboco->roboMove();
+while(!$roboco->isFinish()){
+    $roboco->roboMove();
+}
+echo "Ganhei!!!\n";
+$roboco->disconnect();

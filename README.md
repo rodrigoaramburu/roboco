@@ -27,9 +27,9 @@ O primeito comando a ser passado é:
 
 ### Comando para o sistema
 
-{ target: "SYSTEM", command: "FINISH"}
+{ target: "SYSTEM", command: "IS_FINISH"}
 
-Finaliza o level, retornando se o level foi concluido ou não.
+Retorna se o level foi concluido ou não. Codigo FINISHED ou NOT_FINISHED.
 
 { target: "SYSTEM", command: "DISCONNECT"}
 

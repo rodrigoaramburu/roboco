@@ -14,4 +14,9 @@ $roboco->roboMove();
 $roboco->roboTurnLeft();
 $roboco->roboMove();
 $roboco->roboMove();
-$roboco->finish();
+
+if($roboco->isFinish()){
+    echo "Ganhei\n";
+}else{
+    echo "Perdi\n";
+}

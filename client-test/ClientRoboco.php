@@ -47,13 +47,13 @@ class RobocoClient{
 		
 	public function disconnect(): void
 	{
-		$this->sendRawCommand(['target'=>'SYSTEM', 'command'=>'DISCONNECT']);
+		$response = $this->sendRawCommand(['target'=>'SYSTEM', 'command'=>'DISCONNECT']);
 	}
 
-	public function finish(): bool
+	public function isFinish(): bool
 	{
-		$response = $this->sendRawCommand(['target'=>'SYSTEM', 'command'=>'FINISH']);
-		return $response['status'] == 'SUCCESS';
+		$response = $this->sendRawCommand(['target'=>'SYSTEM', 'command'=>'IS_FINISH']);
+		return $response['status'] === 'SUCCESS' && $response['codigo'] === 'LEVEL.FINISHED';
 	}
 		
 }

@@ -1,6 +1,7 @@
 package br.dev.botecodigital.screen;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +15,7 @@ import br.dev.botecodigital.robo.Robo;
 import br.dev.botecodigital.socket.SocketCommandRequest;
 import br.dev.botecodigital.socket.SocketCommandResponse;
 import br.dev.botecodigital.socket.SocketController;
+import br.dev.botecodigital.socket.SocketCommandRequest.Target;
 
 public class LevelScreen implements Screen {
 
@@ -29,13 +31,13 @@ public class LevelScreen implements Screen {
     private Level level;
     
     private String dialogBoxText = "";
+    private String currentUsername = "";
 
     private LevelStatus status;
 
     private enum LevelStatus {
         WAITING,
-        CONNECTED,
-        DISCONNECTED,
+        RUNNING,
         WIN,
         LOSE
     }
@@ -78,6 +80,10 @@ public class LevelScreen implements Screen {
 
         this.robo.update();
 
+        if(this.level.isFinished(this.robo)){
+            status = LevelStatus.WIN;
+        }
+
         this.batch.begin();
         this.level.render(batch);
         this.drawBottonDialog();
@@ -93,15 +99,15 @@ public class LevelScreen implements Screen {
 
         if(this.status == LevelStatus.WAITING){
             AssetManager.font1.draw(this.batch, "Aguardando conexão...", 0.5f, 1.5f);
-        }else if(this.status == LevelStatus.CONNECTED){
-            AssetManager.font1.draw(this.batch, "Username: " +this.socketController.getUsername() , 0.5f, 1.5f);
+        }else if(this.status == LevelStatus.RUNNING){
+            AssetManager.font1.draw(this.batch, "Username: " +this.currentUsername , 0.5f, 1.5f);
             AssetManager.font1.draw(this.batch, this.dialogBoxText , 0.5f, 0.7f);
-        }else if(this.status == LevelStatus.DISCONNECTED){
-            AssetManager.font1.draw(this.batch, "Desconectado!" , 0.5f, 1.5f);
         }else if(this.status == LevelStatus.WIN){
-            AssetManager.font1.draw(this.batch, "Level Completado Com sucesso!" , 0.5f, 1.5f);
+            AssetManager.font1.draw(this.batch, "Username: " +this.currentUsername , 0.5f, 1.5f);
+            AssetManager.font1.draw(this.batch, "Level Completado com sucesso!" , 0.5f, 0.7f);
         }else if(this.status == LevelStatus.LOSE){
-            AssetManager.font1.draw(this.batch, "Não foi desta vez!" , 0.5f, 1.5f);
+            AssetManager.font1.draw(this.batch, "Username: " +this.socketController.getUsername() , 0.5f, 1.5f);
+            AssetManager.font1.draw(this.batch, "Não foi desta vez!" , 0.5f, 0.7f);
         }
     }
 
@@ -116,11 +122,8 @@ public class LevelScreen implements Screen {
     private void initSocketController() {
         this.socketController = new SocketController();
         this.socketController.setOnConnectedAction( () -> {
-            status = LevelStatus.CONNECTED;
-        });
-
-        this.socketController.setOnDisconnectedAction( () -> {
-            status = LevelStatus.DISCONNECTED;
+            currentUsername = socketController.getUsername();
+            status = LevelStatus.RUNNING;
         });
 
         this.socketController.startServer();
@@ -129,19 +132,29 @@ public class LevelScreen implements Screen {
 
     private void processInput() {
         SocketCommandRequest command = socketController.readCommand();
-        
         if(command != null){        
+            
+            if(command.getTarget() == Target.SYSTEM){
+                processIfIsFinished(command);
+                return;
+            }
+            
+            if(this.status == LevelStatus.WIN || this.status == LevelStatus.LOSE){
+                this.socketController.send(SocketCommandResponse.error("LEVEL.FINISHED", "O level já foi finalizaddo com o status: "+this.status));
+                return;
+            }
+
             processIfRoboMoveAction(command);
 
-            processIfRoboTurnLeft(command);
+            processIfRoboTurnLeftAction(command);
 
-            processIfRoboTurnRight(command);
+            processIfRoboTurnRightAction(command);
+        
 
-            processIfFinished(command);
         }
     }
 
-    private void processIfRoboTurnRight(SocketCommandRequest command) {
+    private void processIfRoboTurnRightAction(SocketCommandRequest command) {
         if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_RIGHT)){
             this.robo.turnRight(() -> { 
                 socketController.send(SocketCommandResponse.success("ROBO.ACTION_OK","Robo virou a direita."));
@@ -151,7 +164,7 @@ public class LevelScreen implements Screen {
         }
     }
 
-    private void processIfRoboTurnLeft(SocketCommandRequest command) {
+    private void processIfRoboTurnLeftAction(SocketCommandRequest command) {
         if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_LEFT)){
             this.robo.turnLeft(() -> { 
                 socketController.send(SocketCommandResponse.success("ROBO.ACTION_OK", "Robo virou a esquerda."));
@@ -171,14 +184,12 @@ public class LevelScreen implements Screen {
         }
     }
 
-    private void processIfFinished(SocketCommandRequest command) {
-        if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.FINISH) ){
+    private void processIfIsFinished(SocketCommandRequest command) {
+        if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.IS_FINISH) ){
             if(this.level.isFinished(this.robo)){
-                status = LevelStatus.WIN;
-                socketController.send(SocketCommandResponse.success("LEVEL.WIN", "Você venceu!!!"));
+                socketController.send(SocketCommandResponse.success("LEVEL.FINISHED", "Level finalizado!"));
             }else{
-                status = LevelStatus.LOSE;
-                socketController.send(SocketCommandResponse.error("LEVEL.LOSE", "Não foi desta vez."));
+                socketController.send(SocketCommandResponse.success("LEVEL.NOT_FINISHED", "Level ainda não finalizado."));
             }
         }
     }
@@ -189,7 +200,6 @@ public class LevelScreen implements Screen {
             this.robo.colide( () ->{
                 status = LevelStatus.LOSE;
                 socketController.send(SocketCommandResponse.error("ROBO.COLLID","Colidiu!"));
-                socketController.disconnect();
             });
         }
 
@@ -222,6 +232,7 @@ public class LevelScreen implements Screen {
         this.batch.dispose();
         this.robo.dispose();
         this.socketController.disconnect();
+        this.socketController.dispose();
         TileManager.dispose();
     }
 

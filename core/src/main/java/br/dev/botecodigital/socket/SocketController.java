@@ -74,11 +74,11 @@ public class SocketController {
                 processSetUsernameCommand();
                 
                 this.status = Status.CONNECTECTED;
-                this.onConnectedAction.handle();
+                if(this.onConnectedAction != null) this.onConnectedAction.handle();
                 
                 String commandString;
                 SocketCommandRequest command;
-                while ((commandString = input.readLine()) != null) {
+                while ( this.client.isConnected() && (commandString = input.readLine()) != null) {
                     command = this.parseCommand(commandString);
 
                     if(!command.isValid()){
@@ -92,6 +92,9 @@ public class SocketController {
 
                     queue.add( command );
                 }
+            }catch(java.net.SocketException e){
+                Gdx.app.log("SOCKET_CONTROLLER", "O cliente desconectou abruptamente");
+                this.disconnect();
             }catch(IOException e){
                 e.printStackTrace();
                 this.disconnect();
@@ -103,9 +106,6 @@ public class SocketController {
         });
         threadListening.start();
     }
-
-
-
 
     public SocketCommandRequest readCommand(){
         if(this.hasCommand()){
@@ -119,6 +119,7 @@ public class SocketController {
     }
 
     public void disconnect(){
+        Gdx.app.log("SOCKET_CONTROLLER", "Desconectou!");
         this.queue.clear();
         this.status = Status.DISCONNECTED;
         this.clientIP = "";
@@ -130,7 +131,7 @@ public class SocketController {
     }
 
     private SocketCommandRequest parseCommand(String jsoString){
-        Gdx.app.log("SOCKETCONTROLLER", jsoString);
+        Gdx.app.log("SOCKET_CONTROLLER", jsoString);
         try{
             return json.fromJson(SocketCommandRequest.class, jsoString);
         }catch(SerializationException e){
@@ -155,13 +156,14 @@ public class SocketController {
         if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.DISCONNECT)){
             this.send(SocketCommandResponse.success("SOCKET.DISCONNECTED","Disconnected!"));
             disconnect();
-            this.onDisconnectedAction.handle();
+            if(this.onDisconnectedAction != null) this.onDisconnectedAction.handle();
             return true;
         }
         return false;
     }
 
     public void send(SocketCommandResponse message){
+        Gdx.app.log("SOCKET_CONTROLLER", this.json.toJson(message));
         out.println(this.json.toJson(message));
         out.flush();
     }
@@ -185,6 +187,13 @@ public class SocketController {
     }
     public void setOnDisconnectedAction(SocketListener socketListener){
         this.onDisconnectedAction = socketListener;
+    }
+
+
+    public void dispose() {
+        this.client.dispose();
+        this.threadListening.interrupt();
+        this.socketServer.dispose();
     }
 
 }
