@@ -1,41 +1,108 @@
-# RoboCo
+# RoboCo (alpha)
 
-# TODO 0.1.0
+O **RoboCo** é uma ferramenta para auxiliar o ensino de programação, inspirada nas atividades do **code.org**, onde um robozinho é movido pela tela percorrendo labirintos.
 
-[x] Criar classe esboço Robo com movimentação
-[x] Criar mecanismo para receber comandos via socket
-[x] Criar classe de cenário
-[x] Tratar colisão do robo com objetos do cenário
-[x] Criar critério de finalização
-[x] Criar tela de seleção de níveis
+Os comandos enviados ao robô são realizados por meio de uma **conexão via socket**, possibilitando a criação de APIs clientes em diversas linguagens de programação.
+
+> ⚠️ **Status:** Projeto em fase *alpha*. A API e os comandos podem sofrer alterações.
+
+---
 
 ## Socket API
 
-Para mover o Robo primeiro conecata-se via Socket na porta 9999, e então são passados comando no formato JSON finalizados com \n.
+Para controlar o RoboCo, o cliente deve se conectar via **Socket** na porta **9999**.
 
-O primeito comando a ser passado é:
+Após a conexão, os comandos são enviados como mensagens de texto no formato **JSON**, sempre finalizadas com o delimitador de quebra de linha (`\n`).
 
-{ target: "SYSTEM", command: "SETUSERNAME", value="<usuario>"}
+### Estrutura do comando
 
-### Comandos para o robo
+Cada comando enviado possui os seguintes campos:
 
-{ target: "ROBO", command: "MOVE"}
+- **target**: define o alvo do comando (`ROBO` ou `SYSTEM`);
+- **command**: comando a ser executado;
+- **value** *(opcional)*: valor associado ao comando.
 
-{ target: "ROBO", command: "TURN_LEFT"}
+Exemplo genérico:
 
-{ target: "ROBO", command: "TURN_RIGHT"}
+```json
+{ "target": "<ROBO|SYSTEM>", "command": "<COMMAND>", "value": "<VALUE>" }
+```
 
-### Comando para o sistema
+## Resposta da API
 
-{ target: "SYSTEM", command: "IS_FINISH"}
+Após o envio e a execução de um comando, o servidor retorna uma mensagem de resposta por meio da conexão *socket*.
 
-Retorna se o level foi concluido ou não. Codigo FINISHED ou NOT_FINISHED.
+A resposta contém os seguintes campos:
 
-{ target: "SYSTEM", command: "DISCONNECT"}
+- **status**: indica se o comando foi processado com sucesso (`SUCCESS`) ou se ocorreu algum erro (`ERROR`);
+- **code**: código interno que representa o resultado do comando;
+- **message**: mensagem descritiva sobre o resultado da operação.
+
+Formato da resposta:
+
+```json
+{ "status": "<SUCCESS|ERROR>", "code": "<code>","message": "<message>" }
+```
+
+## Configuração inicial
+
+O **primeiro comando obrigatório** após a conexão com o servidor é o `SETUSERNAME`, utilizado para identificar o usuário que está realizando a atividade.
+
+```json
+{ "target": "SYSTEM", "command": "SETUSERNAME", "value": "<usuario>"}
+```
+
+### Comandos para o robô (`target: ROBO`)
+
+Os comandos abaixo permitem controlar robô:
+
+#### MOVE
+
+Move o robô uma "casa" para frente, na direção a atual do robô.
+
+```json
+{ "target": "ROBO", "command": "MOVE"}
+```
+
+#### TURN_LEFT
+
+Gira o robô 90 graus para a esquerda em relação à direção atual.
+
+```json
+{ "target": "ROBO", "command": "TURN_LEFT"}
+```
+
+#### TURN_LEFT
+
+Gira o robô 90 graus para a direita em relação à direção atual.
+
+```json
+{ "target": "ROBO", "command": "TURN_RIGHT"}
+```
+
+### Comandos para o sistema (`target: SYSTEM`)
+
+Além dos comandos para interagir com o robô, o cliente pode enviar comandos para o sistema.
+
+#### IS_FINISH
+
+Verifica se o nível foi concluído.
+
+Os possíveis códigos retornados na resposta são:
+
+* FINISHED
+* NOT_FINISHED
+
+```json
+{ "target": "SYSTEM", "command": "IS_FINISH"}
+```
+
+#### DISCONNECT
+
+Realiza a desconeção do cliente *socket*
+
+```json
+{ "target": "SYSTEM", "command": "DISCONNECT"}
+```
 
 
-### Respostas dos comandos
-
-Todo comando gerará um resposta.
-
-{ status: "<SUCCESS|ERROR>", codigo: "<codigo>", messge: "<messge>"}
