@@ -7,7 +7,7 @@
 [x] Criar classe de cenário
 [x] Tratar colisão do robo com objetos do cenário
 [x] Criar critério de finalização
-[ ] Criar tela de abertura
+[x] Criar tela de seleção de níveis
 
 ## Socket API
 

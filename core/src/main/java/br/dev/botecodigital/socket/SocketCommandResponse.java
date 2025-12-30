@@ -8,7 +8,7 @@ public class SocketCommandResponse {
     }
 
     private Status status;
-    private String codigo;
+    private String code;
     private String message;
 
     private SocketCommandResponse(){
@@ -19,7 +19,7 @@ public class SocketCommandResponse {
         SocketCommandResponse response = new SocketCommandResponse();
         response.status = Status.SUCCESS;
         response.message = message;
-        response.codigo = codigo;
+        response.code = codigo;
         return response;
     }
     
@@ -27,7 +27,7 @@ public class SocketCommandResponse {
         SocketCommandResponse response = new SocketCommandResponse();
         response.status = Status.ERROR;
         response.message = message;
-        response.codigo = codigo;
+        response.code = codigo;
         return response;
     }
 
@@ -36,8 +36,8 @@ public class SocketCommandResponse {
         return status;
     }
     
-    public String getCodigo(){
-        return codigo;
+    public String getCode(){
+        return code;
     }
 
     public String getMessage() {

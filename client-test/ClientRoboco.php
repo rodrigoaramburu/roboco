@@ -53,7 +53,7 @@ class RobocoClient{
 	public function isFinish(): bool
 	{
 		$response = $this->sendRawCommand(['target'=>'SYSTEM', 'command'=>'IS_FINISH']);
-		return $response['status'] === 'SUCCESS' && $response['codigo'] === 'LEVEL.FINISHED';
+		return $response['status'] === 'SUCCESS' && $response['code'] === 'LEVEL.FINISHED';
 	}
 		
 }

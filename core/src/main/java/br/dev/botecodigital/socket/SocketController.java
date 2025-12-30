@@ -12,6 +12,7 @@ import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 import com.badlogic.gdx.net.SocketHints;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.SerializationException;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
@@ -19,6 +20,8 @@ import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import br.dev.botecodigital.socket.exception.SocketException;
 
 public class SocketController {
+
+    private static SocketController instance;
 
     private ServerSocket socketServer;
     private BufferedReader input;
@@ -37,6 +40,8 @@ public class SocketController {
     private SocketListener onConnectedAction;
     private SocketListener onDisconnectedAction;
 
+    private Thread serverThread;
+
 
     public enum Status{
         WAITING,
@@ -44,33 +49,62 @@ public class SocketController {
         DISCONNECTED
     }
 
-    public SocketController(){
+    private SocketController(){
         this.json = new Json();
         this.json.setOutputType(OutputType.json);
     }
 
+    public static SocketController getInstance(){
+        if(instance == null){
+            instance = new SocketController();
+        }
+        return instance;
+    }
+
 
     public void startServer() {
-        new Thread( ()  -> {
+        this.serverThread = new Thread( ()  -> {
             ServerSocketHints serverHints = new ServerSocketHints();
             serverHints.acceptTimeout = 0; // infinite
-            socketServer = Gdx.net.newServerSocket(Protocol.TCP, "localhost", 9999, serverHints);
-
+            socketServer = Gdx.net.newServerSocket(Protocol.TCP, "0.0.0.0", 9999, serverHints);
+            
             this.startListening();
 
-        }).start();
+        });
+        this.serverThread.start();
+    }
+
+    public void shutdownServer() { 
+        this.queue.clear();
+        this.status = Status.DISCONNECTED;
+        this.clientIP = "";
+        this.clientUsername = "";
+        
+        if(this.client != null) {
+            this.client.dispose();
+            this.client = null;
+        }
+        this.threadListening.interrupt();
+        this.serverThread.interrupt();
+        this.socketServer.dispose();
+        
     }
 
     private void startListening(){
         threadListening = new Thread( ()  -> {
             this.status = Status.WAITING;
+            
             SocketHints socketHints = new SocketHints();
-            this.client = socketServer.accept(socketHints);
+            try{
+                this.client = socketServer.accept(socketHints);
+            }catch(GdxRuntimeException e){
+                Gdx.app.log("SOCKET_CONTROLLER", "erro no accept");
+            }
             input = new BufferedReader( new InputStreamReader(client.getInputStream() ) );
             out = new PrintWriter(client.getOutputStream(), true);
 
             try{
-
+                
                 processSetUsernameCommand();
                 
                 this.status = Status.CONNECTECTED;
@@ -119,19 +153,17 @@ public class SocketController {
     }
 
     public void disconnect(){
-        Gdx.app.log("SOCKET_CONTROLLER", "Desconectou!");
         this.queue.clear();
         this.status = Status.DISCONNECTED;
         this.clientIP = "";
         this.clientUsername = "";
-        this.client.dispose();
+        if(this.client != null )this.client.dispose();
         this.client = null;
         this.threadListening.interrupt();
-        this.startListening();
     }
 
     private SocketCommandRequest parseCommand(String jsoString){
-        Gdx.app.log("SOCKET_CONTROLLER", jsoString);
+        Gdx.app.log("SOCKET_CONTROLLER", "Comando recebido: "+jsoString);
         try{
             return json.fromJson(SocketCommandRequest.class, jsoString);
         }catch(SerializationException e){

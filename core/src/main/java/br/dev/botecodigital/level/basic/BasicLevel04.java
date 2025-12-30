@@ -55,7 +55,7 @@ public class BasicLevel04 extends Level {
 
     @Override
     public String getName() {
-        return "Básico 03";
+        return "Básico 04";
     }
 
     @Override

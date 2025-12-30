@@ -12,14 +12,24 @@ public class AssetManager {
     public static BitmapFont font1;
 
     public static Texture dialogBox;
-    public static Texture button;
+    public static Texture button100x50;
     public static Texture side;
+
+    public static Texture uiBackgroubd;
+    public static Texture uiPanel;
+    public static Texture uiPanelSelected;
+    public static Texture uiButtonBg;
 
     public static void load(){
 
-        dialogBox = new Texture("dialog-box.png");
-        button = new Texture("button.png");
-        side = new Texture("side.png");
+        dialogBox = new Texture("ui/dialog-box.png");
+        side = new Texture("ui/side.png");
+        button100x50 = new Texture("ui/button-100x50.png");
+
+        uiBackgroubd = new Texture("ui/background.png");
+        uiPanel = new Texture("ui/panel.png");
+        uiPanelSelected = new Texture("ui/panel-selected.png");
+        uiButtonBg = new Texture("ui/button-bg.png");
 
         FreeTypeFontGenerator fontGeneratorRobotoRegular = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto-Regular.ttf"));
         FreeTypeFontParameter params = new FreeTypeFontParameter();
@@ -35,8 +45,12 @@ public class AssetManager {
 
     public static void dispose(){
         dialogBox.dispose();
-        button.dispose();
+        button100x50.dispose();
         side.dispose();
+
+        uiBackgroubd.dispose();
+        uiPanel.dispose();
+        uiPanelSelected.dispose();
 
         font1.dispose();
     }
