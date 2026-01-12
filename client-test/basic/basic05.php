@@ -2,16 +2,21 @@
 
 declare(strict_types=1);
 
-include('../ClientRoboco.php');
+include('../RobocoClientTest.php');
 
-$roboco = new RobocoClient('rodrigo');
+$roboco = new RobocoClientTest('rodrigo');
 
-while(!$roboco->isFinish()){
-    if($roboco->roboScan('RIGHT') === 'EMPTY'){
-        $roboco->roboTurnRight();
-        $roboco->roboMove();
+$finished = false;
+while(!$finished){
+    $response = $roboco->sendRawCommand(['command' => 'ROBOT_SCAN', 'value'=>'RIGHT']);
+
+    if($response['message'] === 'EMPTY'){
+        $roboco->sendRawCommand(['command' => 'ROBOT_TURN_RIGHT']);
+        $roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
     }else{
-        $roboco->roboMove();
+        $roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
     }
+    
+    $finished = $response['code'] === 'LEVEL_FINISHED';
 }
 

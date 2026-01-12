@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-include('../ClientRoboco.php');
+include('../RobocoClientTest.php');
 
-$roboco = new RobocoClient('rodrigo');
+$roboco = new RobocoClientTest('rodrigo');
 
-$roboco->roboMove();
-$roboco->roboMove();
-$roboco->roboMove();
-$roboco->roboTurnLeft();
-$roboco->roboMove();
-$roboco->roboMove();
+$roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
+$roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
+$roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
+$roboco->sendRawCommand(['command' => 'ROBOT_TURN_LEFT']);
+$roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
+$roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
 

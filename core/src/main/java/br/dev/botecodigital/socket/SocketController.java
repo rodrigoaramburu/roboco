@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.SerializationException;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 
+import br.dev.botecodigital.socket.exception.InvalidScoketCommandException;
 import br.dev.botecodigital.socket.exception.SocketException;
 
 public class SocketController {
@@ -113,15 +114,12 @@ public class SocketController {
                 String commandString;
                 SocketCommandRequest command;
                 while ( this.client.isConnected() && (commandString = input.readLine()) != null) {
-                    command = this.parseCommand(commandString);
 
-                    if(!command.isValid()){
-                        send(SocketCommandResponse.error("SOCKET.INVALID_COMMAND","Invalid command"));
+                    try{
+                        command = this.parseCommand(commandString);
+                    }catch(InvalidScoketCommandException e){
+                        send(SocketCommandResponse.error("SOCKET_INVALID_COMMAND", e.getMessage()));
                         continue;
-                    }
-
-                    if(isDisconnectCommand(command)){
-                        break;
                     }
 
                     queue.add( command );
@@ -134,7 +132,7 @@ public class SocketController {
                 this.disconnect();
             }catch(SocketException e){
                 e.printStackTrace();
-                this.send(SocketCommandResponse.error("SYSTEM.USERNAME_NOT_SET","Username not set"));
+                this.send(SocketCommandResponse.error("SYSTEM_USERNAME_NOT_SET","Username not set"));
                 this.disconnect();
             }
         });
@@ -153,6 +151,7 @@ public class SocketController {
     }
 
     public void disconnect(){
+        if(this.onDisconnectedAction != null) this.onDisconnectedAction.handle();
         this.queue.clear();
         this.status = Status.DISCONNECTED;
         this.clientIP = "";
@@ -162,36 +161,33 @@ public class SocketController {
         this.threadListening.interrupt();
     }
 
-    private SocketCommandRequest parseCommand(String jsoString){
+    private SocketCommandRequest parseCommand(String jsoString) throws InvalidScoketCommandException{
         Gdx.app.log("SOCKET_CONTROLLER", "Comando recebido: "+jsoString);
         try{
             return json.fromJson(SocketCommandRequest.class, jsoString);
         }catch(SerializationException e){
-            return new SocketCommandRequest();
+            throw new InvalidScoketCommandException("invalid command");
         }
     }
 
     private void processSetUsernameCommand() throws IOException, SocketException {
         String commandString = input.readLine();
-        SocketCommandRequest command = this.parseCommand(commandString);
-        
-        if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.SETUSERNAME)){
-            this.clientIP = this.client.getRemoteAddress();
-            this.clientUsername = command.getValue();
-            this.send(SocketCommandResponse.success("SYSTEM.USERNAME_SETTED","Username \""+this.clientUsername+"\" was set successfully"));
-        }else{
-            throw new SocketException("Username not set");
-        }
-    }
 
-    private boolean isDisconnectCommand(SocketCommandRequest command){
-        if(command.is(SocketCommandRequest.Target.SYSTEM, SocketCommandRequest.SystemCommand.DISCONNECT)){
-            this.send(SocketCommandResponse.success("SOCKET.DISCONNECTED","Disconnected!"));
-            disconnect();
-            if(this.onDisconnectedAction != null) this.onDisconnectedAction.handle();
-            return true;
+        try{
+            SocketCommandRequest command = this.parseCommand(commandString);
+            if(command.command == SocketCommandRequest.Command.SYSTEM_SETUSERNAME){
+                this.clientIP = this.client.getRemoteAddress();
+                this.clientUsername = command.getValue();
+                this.send(SocketCommandResponse.success("SYSTEM_USERNAME_SETTED","Username \""+this.clientUsername+"\" was set successfully"));
+            }else{
+                throw new SocketException("Username not set");
+            }
+        }catch(InvalidScoketCommandException e){
+            send(SocketCommandResponse.error("SOCKET_INVALID_COMMAND", e.getMessage()));
         }
-        return false;
+        
+        
+        
     }
 
     public void send(SocketCommandResponse message){

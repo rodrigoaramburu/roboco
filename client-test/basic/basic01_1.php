@@ -2,12 +2,17 @@
 
 declare(strict_types=1);
 
-include('../ClientRoboco.php');
+include('../RobocoClientTest.php');
 
-$roboco = new RobocoClient('rodrigo');
+$roboco = new RobocoClientTest('rodrigo');
 
-while(!$roboco->isFinish()){
-    $roboco->roboMove();
+$finished = false;
+while(!$finished){
+    $roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
+    $response = $roboco->sendRawCommand(['command' => 'SYSTEM_IS_FINISH']);
+    if($response['code'] === 'LEVEL_FINISHED'){
+        $finished = true;
+    }
 }
 echo "Ganhei!!!\n";
-$roboco->disconnect();
+$roboco->sendRawCommand(['command' => 'SYSTEM_DISCONNECT']);

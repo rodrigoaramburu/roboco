@@ -18,14 +18,13 @@ Após a conexão, os comandos são enviados como mensagens de texto no formato *
 
 Cada comando enviado possui os seguintes campos:
 
-- **target**: define o alvo do comando (`ROBO` ou `SYSTEM`);
 - **command**: comando a ser executado;
 - **value** *(opcional)*: valor associado ao comando.
 
 Exemplo genérico:
 
 ```json
-{ "target": "<ROBO|SYSTEM>", "command": "<COMMAND>", "value": "<VALUE>" }
+{ "command": "<COMMAND>", "value": "<VALUE>" }
 ```
 
 ## Resposta da API
@@ -46,68 +45,92 @@ Formato da resposta:
 
 ## Configuração inicial
 
-O **primeiro comando obrigatório** após a conexão com o servidor é o `SETUSERNAME`, utilizado para identificar o usuário que está realizando a atividade.
+O **primeiro comando obrigatório** após a conexão com o servidor é o `SYSTEM_SETUSERNAME`, utilizado para identificar o usuário que está realizando a atividade.
 
 ```json
-{ "target": "SYSTEM", "command": "SETUSERNAME", "value": "<usuario>"}
+{ "command": "SYSTEM_SETUSERNAME", "value": "<usuario>"}
 ```
 
-### Comandos para o robô (`target: ROBO`)
+### Comandos para o robô 
 
 Os comandos abaixo permitem controlar robô:
 
-#### MOVE
+#### ROBOT_MOVE
 
 Move o robô uma "casa" para frente, na direção a atual do robô.
 
 ```json
-{ "target": "ROBO", "command": "MOVE"}
+{ "command": "ROBOT_MOVE" }
 ```
 
-#### TURN_LEFT
+Como resposta de sucesso é retornado:
+
+```json
+{ "status": "SUCCESS", "code": "ROBOT_ACTION_OK","message": "Robo moveu para frente." }
+```
+
+Ou caso o robo colida:
+
+```json
+{ "status": "ERROR", "code": "ROBOT_COLLISION","message": "O robo colidiu!" }
+```
+
+#### ROBOT_TURN_LEFT
 
 Gira o robô 90 graus para a esquerda em relação à direção atual.
 
 ```json
-{ "target": "ROBO", "command": "TURN_LEFT"}
+{ "command": "ROBOT_TURN_LEFT"}
 ```
 
-#### TURN_LEFT
+Como resposta de sucesso é retornado:
+
+```json
+{ "status": "SUCCESS", "code": "ROBOT_ACTION_OK","message": "Robo virou a esquerda." }
+```
+
+#### ROBOT_TURN_RIGHT
 
 Gira o robô 90 graus para a direita em relação à direção atual.
 
 ```json
-{ "target": "ROBO", "command": "TURN_RIGHT"}
+{ "command": "ROBOT_TURN_RIGHT"}
 ```
 
-## SCAN 
+Como resposta de sucesso é retornado:
+
+```json
+{ "status": "SUCCESS", "code": "ROBOT_ACTION_OK","message": "Robo virou a direita." }
+```
+
+### ROBOT_SCAN 
 
 Verifica o ambiente em uma dada direção para identificar obstáculos. Direções disponíveis FRONT, LEFT, RIGHT
 
-```
-{ "target": "ROBO", "command": "SCAN", "value": "<direção>"}
+```json
+{ "command": "ROBOT_SCAN", "value": "<direção>"}
 ```
 
 Retorna 
-```
-{ "status": "SUCCESS", "code": "SCAN.SUCCESS","message": "<EMPTY|WALL>" }
+```json
+{ "status": "SUCCESS", "code": "SCAN_SUCCESS","message": "<EMPTY|WALL>" }
 ```
 
-### Comandos para o sistema (`target: SYSTEM`)
+### Comandos para o sistema
 
 Além dos comandos para interagir com o robô, o cliente pode enviar comandos para o sistema.
 
-#### IS_FINISH
+#### SYSTEM_IS_FINISH
 
 Verifica se o nível foi concluído.
 
 Os possíveis códigos retornados na resposta são:
 
-* FINISHED
-* NOT_FINISHED
+* LEVEL_FINISHED
+* LEVEL_NOT_FINISHED
 
 ```json
-{ "target": "SYSTEM", "command": "IS_FINISH"}
+{ "command": "SYSTEM_IS_FINISH"}
 ```
 
 #### DISCONNECT
@@ -115,7 +138,7 @@ Os possíveis códigos retornados na resposta são:
 Realiza a desconeção do cliente *socket*
 
 ```json
-{ "target": "SYSTEM", "command": "DISCONNECT"}
+{ "command": "SYSTEM_DISCONNECT"}
 ```
 
 
