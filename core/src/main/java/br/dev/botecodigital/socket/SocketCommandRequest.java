@@ -19,7 +19,8 @@ public class SocketCommandRequest {
     public enum RoboCommand{
         MOVE,
         TURN_LEFT,
-        TURN_RIGHT
+        TURN_RIGHT, 
+        SCAN
     }
 
     public boolean is(Target expectedTarget, Enum<?> expectedCommand) {

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import br.dev.botecodigital.robo.Robo;
-import br.dev.botecodigital.robo.Robo.Direction;
+import br.dev.botecodigital.robo.Robo.MapDirection;
 
 public abstract class Level {
 
@@ -28,7 +28,7 @@ public abstract class Level {
 
     public abstract Vector2 getRoboInitialPosition();
 
-    public abstract Direction getRoboDirection();
+    public abstract MapDirection getRoboDirection();
 
     public abstract boolean isFinished(Robo robo);
 
@@ -51,12 +51,12 @@ public abstract class Level {
         }
     }
 
-    public boolean canMove(float x, float y, Direction diretion){
+    public boolean canMove(float x, float y, MapDirection direction){
         
-        if(diretion == Direction.LEFT) x--;
-        if(diretion == Direction.RIGHT) x++;
-        if(diretion == Direction.UP) y++;
-        if(diretion == Direction.DOWN) y--;
+        if(direction == MapDirection.LEFT) x--;
+        if(direction == MapDirection.RIGHT) x++;
+        if(direction == MapDirection.UP) y++;
+        if(direction == MapDirection.DOWN) y--;
         
         if(x < 0 || x >= 10 || y < 0 || y > 10){
             return false;
@@ -65,6 +65,15 @@ public abstract class Level {
         Tile[][] wallTile = this.getWalls();
         return wallTile[ 9 - (int)  y][(int) x] == null;
 
+    }
+
+    public Tile getTile(float x, float y){
+        if(x < 0 || x >= 10 || y < 0 || y > 10){
+            return null;
+        }
+        
+        Tile[][] wallTile = this.getWalls();
+        return wallTile[ 9 - (int)  y][(int) x];
     }
 
 

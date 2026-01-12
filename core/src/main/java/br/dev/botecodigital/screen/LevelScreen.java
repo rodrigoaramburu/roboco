@@ -16,6 +16,7 @@ import br.dev.botecodigital.AssetManager;
 import br.dev.botecodigital.level.Level;
 import br.dev.botecodigital.level.TileManager;
 import br.dev.botecodigital.robo.Robo;
+import br.dev.botecodigital.robo.Robo.RoboRelativeDirection;
 import br.dev.botecodigital.screen.uicomponents.ButtonSmall;
 import br.dev.botecodigital.socket.SocketCommandRequest;
 import br.dev.botecodigital.socket.SocketCommandResponse;
@@ -116,11 +117,13 @@ public class LevelScreen implements Screen {
         }
 
         this.batch.begin();
+
         this.level.render(batch);
         this.drawBottonDialog();
         this.drawMenuButton();
         this.drawSide();
         this.robo.render(batch);
+
         this.batch.end();
 
         this.stage.act(delta);
@@ -184,13 +187,14 @@ public class LevelScreen implements Screen {
 
             processIfRoboTurnRightAction(command);
         
+            processIfRoboScanAction(command);
 
         }
     }
 
     private void processIfRoboTurnRightAction(SocketCommandRequest command) {
         if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_RIGHT)){
-            this.robo.turnRight(() -> { 
+            this.robo.turnRight((result) -> { 
                 SocketController.getInstance().send(SocketCommandResponse.success("ROBO.ACTION_OK","Robo virou a direita."));
                 this.dialogBoxText = "";
             });
@@ -200,7 +204,7 @@ public class LevelScreen implements Screen {
 
     private void processIfRoboTurnLeftAction(SocketCommandRequest command) {
         if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.TURN_LEFT)){
-            this.robo.turnLeft(() -> { 
+            this.robo.turnLeft((result) -> { 
                 SocketController.getInstance().send(SocketCommandResponse.success("ROBO.ACTION_OK", "Robo virou a esquerda."));
                 this.dialogBoxText = "";
             });
@@ -210,7 +214,7 @@ public class LevelScreen implements Screen {
 
     private void processIfRoboMoveAction(SocketCommandRequest command) {
         if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.MOVE) && this.canMove() ){
-            this.robo.move( () -> {  
+            this.robo.move( (result) -> {  
                 SocketController.getInstance().send(SocketCommandResponse.success("ROBO.ACTION_OK","Robo moveu para frente."));
                 this.dialogBoxText = "";
             });
@@ -228,10 +232,32 @@ public class LevelScreen implements Screen {
         }
     }
 
+    private void processIfRoboScanAction(SocketCommandRequest command) {
+        if(command.is(SocketCommandRequest.Target.ROBO, SocketCommandRequest.RoboCommand.SCAN)){
+
+            try{
+                RoboRelativeDirection direction = RoboRelativeDirection.valueOf(command.getValue());
+
+                this.robo.scan( this.level, direction, (result) ->{
+                    SocketController.getInstance().send(
+                        SocketCommandResponse.success("ROBO.SCAN_RESULT", result)
+                    );
+                });
+                this.dialogBoxText = "Verificando "+direction.name()+"...";
+            }catch(IllegalArgumentException e){
+                SocketController.getInstance().send(
+                    SocketCommandResponse.error("ROBO.INVALIDE_DIRECTION", "Direção de scan inválida")
+                );
+            }
+
+            
+        }
+    }
+
     public boolean canMove(){
 
         if(!this.level.canMove(this.robo.getX(), this.robo.getY(), this.robo.getDiretion())){
-            this.robo.colide( () ->{
+            this.robo.colide( (result) ->{
                 status = LevelStatus.LOSE;
                 SocketController.getInstance().send(SocketCommandResponse.error("ROBO.COLLID","Colidiu!"));
             });

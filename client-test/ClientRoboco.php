@@ -44,6 +44,15 @@ class RobocoClient{
     {
        return $this->sendRawCommand(['target'=>'ROBO','command'=>'TURN_RIGHT']);
     }
+    
+	public function roboScan(string $direction): ?string
+    {
+       $result = $this->sendRawCommand(['target'=>'ROBO','command'=>'SCAN', 'value'=>$direction]);
+	   if($result['code'] === 'ROBO.SCAN_RESULT'){
+		return $result['message'];
+	   }
+	   return null;
+    }
 		
 	public function disconnect(): void
 	{

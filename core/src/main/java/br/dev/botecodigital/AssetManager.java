@@ -20,6 +20,8 @@ public class AssetManager {
     public static Texture uiPanelSelected;
     public static Texture uiButtonBg;
 
+    public static Texture scan;
+
     public static void load(){
 
         dialogBox = new Texture("ui/dialog-box.png");
@@ -30,6 +32,9 @@ public class AssetManager {
         uiPanel = new Texture("ui/panel.png");
         uiPanelSelected = new Texture("ui/panel-selected.png");
         uiButtonBg = new Texture("ui/button-bg.png");
+        
+        scan = new Texture("robo/scan.png");
+
 
         FreeTypeFontGenerator fontGeneratorRobotoRegular = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Roboto-Regular.ttf"));
         FreeTypeFontParameter params = new FreeTypeFontParameter();
@@ -53,5 +58,7 @@ public class AssetManager {
         uiPanelSelected.dispose();
 
         font1.dispose();
+
+        scan.dispose();
     }
 }

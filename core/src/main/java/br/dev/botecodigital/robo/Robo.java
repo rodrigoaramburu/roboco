@@ -5,6 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+
+import br.dev.botecodigital.AssetManager;
+import br.dev.botecodigital.level.Level;
+import br.dev.botecodigital.level.Tile;
 
 public class Robo {
 
@@ -13,32 +18,44 @@ public class Robo {
     private Sprite sprite;
     private Texture texture;
 
+    private Sprite spriteScanner;
+
     private float velocity = 2.0f;
 
     private RoboAction currentAction = null;
 
-    private Direction direction;
+    private MapDirection direction;
 
     private float actionProgress = 0f;
     
     private TextureRegion[][] frames;
 
     private FinishRoboAction finishRoboAction;
+    private String finishRoboActionCode = null;
 
-    public enum Direction{
+    public enum MapDirection{
         UP, RIGHT, DOWN, LEFT; // posições em sentido horário
+    }
+
+    public enum RoboRelativeDirection{
+        FRONT, LEFT, RIGHT, BACK
     }
 
     private enum RoboAction{
         MOVING,
         TURNING,
-        COLLIDING
+        COLLIDING, 
+        SCANNING
     } 
    
 
-    public Robo(float x, float y, Direction direction){
+    public Robo(float x, float y, MapDirection direction){
         this.texture = new Texture("robo/robo-sprite.png");
         frames = TextureRegion.split(texture, 50, 50);
+
+        this.spriteScanner = new Sprite(AssetManager.scan);
+        this.spriteScanner.setSize(1, 1);
+        this.spriteScanner.setOriginCenter();
 
         this.direction = direction;
         this.sprite = new Sprite(this.frames[0][0]);
@@ -52,6 +69,12 @@ public class Robo {
         this.sprite.translate(2, 2);
         this.sprite.draw(batch);
         this.sprite.translate(-2, -2);
+
+        if(this.currentAction == RoboAction.SCANNING){
+            this.spriteScanner.translate(2, 2);
+            this.spriteScanner.draw(batch);
+            this.spriteScanner.translate(-2, -2);
+        }
     }
 
     public void move(FinishRoboAction finishRoboAction){
@@ -67,7 +90,7 @@ public class Robo {
         
         int i = this.direction.ordinal() - 1;
         i = i < 0 ? 3 : i;
-        this.direction = Direction.values()[i];
+        this.direction = MapDirection.values()[i];
 
         this.currentAction = RoboAction.TURNING;
         this.finishRoboAction = finishRoboAction;
@@ -80,7 +103,7 @@ public class Robo {
         if(this.isExecutingAction()) return;
 
         int i = (this.direction.ordinal() + 1) % 4; 
-        this.direction = Direction.values()[i];
+        this.direction = MapDirection.values()[i];
 
         this.currentAction = RoboAction.TURNING;
         this.finishRoboAction = finishRoboAction;
@@ -93,6 +116,76 @@ public class Robo {
         this.finishRoboAction = finishRoboAction;
         this.actionProgress = 1f;
 
+    }
+
+    public void scan(Level level, RoboRelativeDirection relativeDirection, FinishRoboAction finishRoboAction) {
+        if(this.isExecutingAction()) return;
+        this.currentAction = RoboAction.SCANNING;
+        this.finishRoboAction = finishRoboAction;
+        this.actionProgress = 3f;
+
+        Vector2 scanPosition = this.getRelativePosition(relativeDirection);
+
+        Tile tile = level.getTile(scanPosition.x, scanPosition.y);
+        if(tile == null){
+            this.finishRoboActionCode = "EMPTY";
+        }else{
+            this.finishRoboActionCode = "WALL";
+        }
+
+        this.spriteScanner.setPosition(scanPosition.x, scanPosition.y);
+
+        if(scanPosition.y > this.getY()){
+            this.spriteScanner.setRotation(0);
+        }
+        if(scanPosition.y < this.getY()){
+            this.spriteScanner.setRotation(180);
+        }
+        if(scanPosition.x > this.getX()){
+            this.spriteScanner.setRotation(-90);
+        }
+        if(scanPosition.x < this.getX()){
+            this.spriteScanner.setRotation(90);
+        }
+
+    }
+
+    private Vector2 getRelativePosition(RoboRelativeDirection direction) {
+        float x = this.getX();
+        float y = this.getY();
+
+        if(RoboRelativeDirection.FRONT  == direction ){
+            if(this.direction == MapDirection.LEFT) x--;
+            if(this.direction == MapDirection.RIGHT) x++;
+            if(this.direction == MapDirection.UP) y++;
+            if(this.direction == MapDirection.DOWN) y--;
+            return new Vector2(x, y);
+        }
+        if(RoboRelativeDirection.LEFT  == direction){
+            if(this.direction == MapDirection.LEFT) y--;
+            if(this.direction == MapDirection.RIGHT) y++;
+            if(this.direction == MapDirection.UP) x--;
+            if(this.direction == MapDirection.DOWN) x++;
+            return new Vector2(x, y);
+        }
+
+        if(RoboRelativeDirection.RIGHT  == direction){
+            if(this.direction == MapDirection.LEFT) y++;
+            if(this.direction == MapDirection.RIGHT) y--;
+            if(this.direction == MapDirection.UP) x++;
+            if(this.direction == MapDirection.DOWN) x--;
+            return new Vector2(x, y);
+        }
+
+        if(RoboRelativeDirection.BACK  == direction){
+            if(this.direction == MapDirection.LEFT) x++;
+            if(this.direction == MapDirection.RIGHT) x--;
+            if(this.direction == MapDirection.UP) y--;
+            if(this.direction == MapDirection.DOWN) y++;
+            return new Vector2(x, y);
+        }
+
+        return null;
     }
 
     public void update() {
@@ -121,17 +214,18 @@ public class Robo {
         this.currentAction = null;
         this.actionProgress = 0f;
         this.sprite.setPosition(Math.round(this.sprite.getX()), Math.round(this.sprite.getY()));
-        this.finishRoboAction.action();
+        this.finishRoboAction.action(this.finishRoboActionCode);
+        this.finishRoboActionCode = null;
         this.finishRoboAction = null;
     }
 
     private void handleRobotMoveAction(float actionPart) {
        
-        if(this.direction == Direction.UP){
+        if(this.direction == MapDirection.UP){
             this.sprite.translateY(actionPart);
-        }else if(this.direction == Direction.DOWN){
+        }else if(this.direction == MapDirection.DOWN){
             this.sprite.translateY(-actionPart);                
-        }else if(this.direction == Direction.LEFT){
+        }else if(this.direction == MapDirection.LEFT){
             this.sprite.translateX(-actionPart);                
         }else{
             this.sprite.translateX(actionPart);                
@@ -139,7 +233,7 @@ public class Robo {
         
     }
 
-    private void handleRobotCollidingAction(float actionPart) {
+    private void handleRobotCollidingAction (float actionPart) {
 
         int factor = 1;
         if(this.actionProgress < 0.2f) factor = 1; else
@@ -147,11 +241,11 @@ public class Robo {
         if(this.actionProgress < 0.6f) factor = 1; else
         if(this.actionProgress < 0.8f) factor = -1; 
         
-        if(this.direction == Direction.UP){
+        if(this.direction == MapDirection.UP){
             this.sprite.translateY(actionPart * factor);
-        }else if(this.direction == Direction.DOWN){
+        }else if(this.direction == MapDirection.DOWN){
             this.sprite.translateY(-actionPart * factor);                
-        }else if(this.direction == Direction.LEFT){
+        }else if(this.direction == MapDirection.LEFT){
             this.sprite.translateX(-actionPart * factor);  
         }else{
             this.sprite.translateX(actionPart * factor);                
@@ -170,11 +264,13 @@ public class Robo {
         return this.sprite.getY();
     }
 
-    public Direction getDiretion() {
+    public MapDirection getDiretion() {
         return this.direction;
     }
 
     public void dispose(){
         this.texture.dispose();
     }
+
+
 }

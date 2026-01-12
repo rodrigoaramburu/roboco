@@ -80,6 +80,19 @@ Gira o robô 90 graus para a direita em relação à direção atual.
 { "target": "ROBO", "command": "TURN_RIGHT"}
 ```
 
+## SCAN 
+
+Verifica o ambiente em uma dada direção para identificar obstáculos. Direções disponíveis FRONT, LEFT, RIGHT
+
+```
+{ "target": "ROBO", "command": "SCAN", "value": "<direção>"}
+```
+
+Retorna 
+```
+{ "status": "SUCCESS", "code": "SCAN.SUCCESS","message": "<EMPTY|WALL>" }
+```
+
 ### Comandos para o sistema (`target: SYSTEM`)
 
 Além dos comandos para interagir com o robô, o cliente pode enviar comandos para o sistema.

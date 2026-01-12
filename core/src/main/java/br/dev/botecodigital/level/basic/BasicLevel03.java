@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import br.dev.botecodigital.level.Level;
 import br.dev.botecodigital.level.Tile;
 import br.dev.botecodigital.robo.Robo;
-import br.dev.botecodigital.robo.Robo.Direction;
+import br.dev.botecodigital.robo.Robo.MapDirection;
 
 public class BasicLevel03 extends Level {
 
@@ -49,8 +49,8 @@ public class BasicLevel03 extends Level {
     }
 
     @Override
-    public Direction getRoboDirection(){
-        return Direction.RIGHT;
+    public MapDirection getRoboDirection(){
+        return MapDirection.RIGHT;
     }
 
     @Override

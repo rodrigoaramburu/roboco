@@ -9,7 +9,7 @@ import br.dev.botecodigital.level.Tile;
 import br.dev.botecodigital.robo.Robo;
 import br.dev.botecodigital.robo.Robo.MapDirection;
 
-public class BasicLevel01 extends Level {
+public class BasicLevel05 extends Level {
 
     @Override
     public Tile[][] getFloor() {
@@ -18,8 +18,8 @@ public class BasicLevel01 extends Level {
             {FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_06_, FAC_F_01_},
             {FAC_F_06_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_06_, FAC_F_01_, FAC_F_01_, FAC_F_01_},
             {FAC_F_01_, FAC_F_01_, FAC_F_06_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_},
-            {FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_06_, FAC_F_01_, FAC_F_01X, FAC_F_01_, FAC_F_01_, FAC_F_01_},
             {FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_},
+            {FAC_F_01_, FAC_F_01_, FAC_F_01X, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_},
             {FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_},
             {FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_},
             {FAC_F_01_, FAC_F_06_, FAC_F_01_, FAC_F_06_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_01_, FAC_F_06_, FAC_F_01_},
@@ -30,13 +30,13 @@ public class BasicLevel01 extends Level {
     @Override
     public Tile[][] getWalls() {
         return new Tile[][]{
-            {__BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__},           
-            {__BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__},           
-            {__BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__},           
-            {__BLANK__, __BLANK__, __BLANK__, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, __BLANK__, __BLANK__},           
-            {__BLANK__, __BLANK__, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__},           
-            {__BLANK__, __BLANK__, __BLANK__, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, __BLANK__, __BLANK__},           
-            {__BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__},           
+            {FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, __BLANK__, __BLANK__},           
+            {FAC_W_12_, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__},           
+            {FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__},           
+            {__BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, FAC_W_12_, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__},           
+            {__BLANK__, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__},           
+            {__BLANK__, FAC_W_12_, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__},           
+            {__BLANK__, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, __BLANK__, __BLANK__},           
             {__BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__},           
             {__BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__},           
             {__BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__, __BLANK__}           
@@ -45,7 +45,7 @@ public class BasicLevel01 extends Level {
 
     @Override
     public Vector2 getRoboInitialPosition() {
-        return new Vector2(4, 5);
+        return new Vector2(1, 8);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class BasicLevel01 extends Level {
 
     @Override
     public String getName() {
-        return "Básico 01";
+        return "Básico 05";
     }
 
     @Override
@@ -65,8 +65,7 @@ public class BasicLevel01 extends Level {
 
     @Override
     public boolean isFinished(Robo robo) {
-        return robo.getX() == 6 && robo.getY() == 5;
+        return robo.getX() == 2 && robo.getY() == 4;
     }
-
 
 }

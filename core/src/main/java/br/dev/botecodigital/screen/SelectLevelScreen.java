@@ -25,6 +25,7 @@ import br.dev.botecodigital.level.basic.BasicLevel01;
 import br.dev.botecodigital.level.basic.BasicLevel02;
 import br.dev.botecodigital.level.basic.BasicLevel03;
 import br.dev.botecodigital.level.basic.BasicLevel04;
+import br.dev.botecodigital.level.basic.BasicLevel05;
 import br.dev.botecodigital.screen.uicomponents.Button;
 import br.dev.botecodigital.screen.uicomponents.ListItem;
 
@@ -45,7 +46,8 @@ public class SelectLevelScreen implements Screen {
             new BasicLevel01(),
             new BasicLevel02(),
             new BasicLevel03(),
-            new BasicLevel04()
+            new BasicLevel04(),
+            new BasicLevel05()
         );
     }
 
