@@ -23,6 +23,7 @@ import br.dev.botecodigital.socket.exception.SocketException;
 public class SocketController {
 
     private static SocketController instance;
+    private int port = 9999;
 
     private ServerSocket socketServer;
     private BufferedReader input;
@@ -69,7 +70,7 @@ public class SocketController {
         this.serverThread = new Thread( ()  -> {
             ServerSocketHints serverHints = new ServerSocketHints();
             serverHints.acceptTimeout = 0; // infinite
-            socketServer = Gdx.net.newServerSocket(Protocol.TCP, "0.0.0.0", 9999, serverHints);
+            socketServer = Gdx.net.newServerSocket(Protocol.TCP, "0.0.0.0", this.port, serverHints);
             
             this.startListening();
 
@@ -231,6 +232,10 @@ public class SocketController {
         this.client.dispose();
         this.threadListening.interrupt();
         this.socketServer.dispose();
+    }
+
+    public int getPort() {
+        return this.port;
     }
 
     

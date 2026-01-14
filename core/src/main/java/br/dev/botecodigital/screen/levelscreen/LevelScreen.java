@@ -24,6 +24,7 @@ import br.dev.botecodigital.screen.levelscreen.commands.RobotTurnRightCommandPro
 import br.dev.botecodigital.screen.levelscreen.commands.SystemDisconnectCommandProcessor;
 import br.dev.botecodigital.screen.levelscreen.commands.SystemIsFinishCommandProcessor;
 import br.dev.botecodigital.screen.uicomponents.ButtonSmall;
+import br.dev.botecodigital.socket.NetworkUtils;
 import br.dev.botecodigital.socket.SocketCommandRequest;
 import br.dev.botecodigital.socket.SocketCommandResponse;
 import br.dev.botecodigital.socket.SocketController;
@@ -162,7 +163,8 @@ public class LevelScreen implements Screen {
 
     private void initSocketController() {
         SocketController.getInstance().setOnStartListenning( () ->{
-            this.dialogBox.addMessage("Aguardando conexão...");
+            int port = SocketController.getInstance().getPort();
+            this.dialogBox.addMessage("Aguardando conexão em "+NetworkUtils.getLocalIPAddress()+":"+port+"...");
         });
 
         SocketController.getInstance().setOnConnectedAction( () -> {
