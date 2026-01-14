@@ -3,8 +3,8 @@ package br.dev.botecodigital.level;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-import br.dev.botecodigital.robo.Robo;
-import br.dev.botecodigital.robo.Robo.MapDirection;
+import br.dev.botecodigital.robot.Robot;
+import br.dev.botecodigital.robot.Robot.MapDirection;
 
 public abstract class Level {
 
@@ -26,12 +26,11 @@ public abstract class Level {
 
     public abstract String getDescription();
 
-    public abstract Vector2 getRoboInitialPosition();
+    public abstract Vector2 getRobotInitialPosition();
 
-    public abstract MapDirection getRoboDirection();
+    public abstract MapDirection getRobotDirection();
 
-    public abstract boolean isFinished(Robo robo);
-
+    public abstract boolean isFinished(Robot robot);
 
     public void render(SpriteBatch batch){
         Tile[][] floor = this.getFloor();

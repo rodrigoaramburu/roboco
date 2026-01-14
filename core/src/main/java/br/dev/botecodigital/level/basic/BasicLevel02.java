@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import br.dev.botecodigital.level.Level;
 import br.dev.botecodigital.level.Tile;
-import br.dev.botecodigital.robo.Robo;
-import br.dev.botecodigital.robo.Robo.MapDirection;
+import br.dev.botecodigital.robot.Robot;
+import br.dev.botecodigital.robot.Robot.MapDirection;
 
 public class BasicLevel02 extends Level {
 
@@ -44,12 +44,12 @@ public class BasicLevel02 extends Level {
     }
 
     @Override
-    public Vector2 getRoboInitialPosition() {
+    public Vector2 getRobotInitialPosition() {
         return new Vector2(6, 2);
     }
 
     @Override
-    public MapDirection getRoboDirection(){
+    public MapDirection getRobotDirection(){
         return MapDirection.UP;
     }
 
@@ -64,8 +64,8 @@ public class BasicLevel02 extends Level {
     }
 
     @Override
-    public boolean isFinished(Robo robo) {
-        return robo.getX() == 4 && robo.getY() == 5;
+    public boolean isFinished(Robot robot) {
+        return robot.getX() == 4 && robot.getY() == 5;
     }
 
 }

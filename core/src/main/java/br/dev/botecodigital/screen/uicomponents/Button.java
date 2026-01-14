@@ -17,7 +17,7 @@ public class Button extends Table {
 
         this.setSize(200, 53);
 
-        LabelStyle style = new LabelStyle(AssetManager.font1, Color.WHITE);
+        LabelStyle style = new LabelStyle(AssetManager.font36, Color.WHITE);
         Label label = new Label(labelText, style);
         label.setFontScale(0.7f);
 

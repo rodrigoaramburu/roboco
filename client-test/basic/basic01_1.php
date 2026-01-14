@@ -9,7 +9,9 @@ $roboco = new RobocoClientTest('rodrigo');
 $finished = false;
 while(!$finished){
     $roboco->sendRawCommand(['command' => 'ROBOT_MOVE']);
+    print_r($response);
     $response = $roboco->sendRawCommand(['command' => 'SYSTEM_IS_FINISH']);
+    print_r($response);
     if($response['code'] === 'LEVEL_FINISHED'){
         $finished = true;
     }

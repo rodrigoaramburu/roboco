@@ -24,7 +24,7 @@ public class ListItem extends Table{
         setSize(580, 95);
         setTouchable(Touchable.enabled);
 
-        LabelStyle style = new LabelStyle(AssetManager.font1, Color.WHITE);
+        LabelStyle style = new LabelStyle(AssetManager.font36, Color.WHITE);
         Label titleLabel = new Label(this.level.getName(), style);
         titleLabel.setFontScale(0.7f);
         

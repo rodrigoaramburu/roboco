@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 
 public class AssetManager {
 
-    public static BitmapFont font1;
+    public static BitmapFont font36;
+    public static BitmapFont font20;
+    public static BitmapFont font14;
 
     public static Texture dialogBox;
     public static Texture button100x50;
@@ -42,9 +44,25 @@ public class AssetManager {
         params.color = Color.WHITE;
         params.borderWidth = 2;
         params.borderColor = Color.BLACK;
-        font1 = fontGeneratorRobotoRegular.generateFont(params);
-        font1.setUseIntegerPositions(false);
-        font1.getData().setScale(0.01f);
+        font36 = fontGeneratorRobotoRegular.generateFont(params);
+        font36.setUseIntegerPositions(false);
+        
+        FreeTypeFontParameter params2 = new FreeTypeFontParameter();
+        params2.size = 20;
+        params2.color = Color.WHITE;
+        params2.borderWidth = 1;
+        params2.borderColor = Color.BLACK;
+        font20 = fontGeneratorRobotoRegular.generateFont(params2);
+        font20.setUseIntegerPositions(false);
+
+        FreeTypeFontParameter params3 = new FreeTypeFontParameter();
+        params3.size = 14;
+        params3.color = Color.WHITE;
+        params3.borderWidth = 1;
+        params3.borderColor = Color.BLACK;
+        font14 = fontGeneratorRobotoRegular.generateFont(params2);
+        font14.setUseIntegerPositions(false);
+        
 
     }
 
@@ -57,7 +75,8 @@ public class AssetManager {
         uiPanel.dispose();
         uiPanelSelected.dispose();
 
-        font1.dispose();
+        font36.dispose();
+        font20.dispose();
 
         scan.dispose();
     }

@@ -40,8 +40,10 @@ public class SocketController {
 
     private SocketListener onConnectedAction;
     private SocketListener onDisconnectedAction;
+    private SocketListener onStartListenningAction;
 
     private Thread serverThread;
+
 
 
     public enum Status{
@@ -94,6 +96,9 @@ public class SocketController {
     private void startListening(){
         threadListening = new Thread( ()  -> {
             this.status = Status.WAITING;
+            Gdx.graphics.setTitle("Aguardando conexão...");
+
+            if(this.onStartListenningAction != null) this.onStartListenningAction.handle();
             
             SocketHints socketHints = new SocketHints();
             try{
@@ -159,6 +164,7 @@ public class SocketController {
         if(this.client != null )this.client.dispose();
         this.client = null;
         this.threadListening.interrupt();
+        Gdx.graphics.setTitle("RoboCo");
     }
 
     private SocketCommandRequest parseCommand(String jsoString) throws InvalidScoketCommandException{
@@ -216,6 +222,9 @@ public class SocketController {
     public void setOnDisconnectedAction(SocketListener socketListener){
         this.onDisconnectedAction = socketListener;
     }
+    public void setOnStartListenning(SocketListener socketListener) {
+        this.onStartListenningAction = socketListener;
+    }
 
 
     public void dispose() {
@@ -223,5 +232,7 @@ public class SocketController {
         this.threadListening.interrupt();
         this.socketServer.dispose();
     }
+
+    
 
 }

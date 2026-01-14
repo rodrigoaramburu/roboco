@@ -1,4 +1,4 @@
-package br.dev.botecodigital.robo;
+package br.dev.botecodigital.robot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,7 +11,7 @@ import br.dev.botecodigital.AssetManager;
 import br.dev.botecodigital.level.Level;
 import br.dev.botecodigital.level.Tile;
 
-public class Robo {
+public class Robot {
 
     private static final double DELAY_BETWEEN_ACTION = -0.5;
     
@@ -22,7 +22,7 @@ public class Robo {
 
     private float velocity = 2.0f;
 
-    private RoboAction currentAction = null;
+    private RobotAction currentAction = null;
 
     private MapDirection direction;
 
@@ -30,18 +30,24 @@ public class Robo {
     
     private TextureRegion[][] frames;
 
-    private FinishRoboAction finishRoboAction;
+    private FinishRobotAction finishRoboAction;
     private String finishRoboActionCode = null;
 
     public enum MapDirection{
         UP, RIGHT, DOWN, LEFT; // posições em sentido horário
     }
 
-    public enum RoboRelativeDirection{
-        FRONT, LEFT, RIGHT, BACK
+    public enum RobotRelativeDirection{
+        FRONT("FRENTE"), LEFT("ESQUERDA"), RIGHT("DIREITA"), BACK("ATRÁS");
+
+        public final String label;
+
+        private RobotRelativeDirection(String label){
+            this.label = label;
+        }
     }
 
-    private enum RoboAction{
+    private enum RobotAction{
         MOVING,
         TURNING,
         COLLIDING, 
@@ -49,7 +55,7 @@ public class Robo {
     } 
    
 
-    public Robo(float x, float y, MapDirection direction){
+    public Robot(float x, float y, MapDirection direction){
         this.texture = new Texture("robo/robo-sprite.png");
         frames = TextureRegion.split(texture, 50, 50);
 
@@ -70,57 +76,57 @@ public class Robo {
         this.sprite.draw(batch);
         this.sprite.translate(-2, -2);
 
-        if(this.currentAction == RoboAction.SCANNING){
+        if(this.currentAction == RobotAction.SCANNING){
             this.spriteScanner.translate(2, 2);
             this.spriteScanner.draw(batch);
             this.spriteScanner.translate(-2, -2);
         }
     }
 
-    public void move(FinishRoboAction finishRoboAction){
+    public void move(FinishRobotAction finishRoboAction){
         if(this.isExecutingAction()) return;
         
-        this.currentAction = RoboAction.MOVING;
+        this.currentAction = RobotAction.MOVING;
         this.actionProgress = 1f;
         this.finishRoboAction = finishRoboAction;
     }
     
-    public void turnLeft(FinishRoboAction finishRoboAction){
+    public void turnLeft(FinishRobotAction finishRoboAction){
         if(this.isExecutingAction()) return;
         
         int i = this.direction.ordinal() - 1;
         i = i < 0 ? 3 : i;
         this.direction = MapDirection.values()[i];
 
-        this.currentAction = RoboAction.TURNING;
+        this.currentAction = RobotAction.TURNING;
         this.finishRoboAction = finishRoboAction;
         this.actionProgress = 1f;
 
     }
 
 
-    public void turnRight(FinishRoboAction finishRoboAction){
+    public void turnRight(FinishRobotAction finishRoboAction){
         if(this.isExecutingAction()) return;
 
         int i = (this.direction.ordinal() + 1) % 4; 
         this.direction = MapDirection.values()[i];
 
-        this.currentAction = RoboAction.TURNING;
+        this.currentAction = RobotAction.TURNING;
         this.finishRoboAction = finishRoboAction;
         this.actionProgress = 1f;
     }
 
-    public void colide(FinishRoboAction finishRoboAction) {
+    public void colide(FinishRobotAction finishRoboAction) {
         if(this.isExecutingAction()) return;
-        this.currentAction = RoboAction.COLLIDING;
+        this.currentAction = RobotAction.COLLIDING;
         this.finishRoboAction = finishRoboAction;
         this.actionProgress = 1f;
 
     }
 
-    public void scan(Level level, RoboRelativeDirection relativeDirection, FinishRoboAction finishRoboAction) {
+    public void scan(Level level, RobotRelativeDirection relativeDirection, FinishRobotAction finishRoboAction) {
         if(this.isExecutingAction()) return;
-        this.currentAction = RoboAction.SCANNING;
+        this.currentAction = RobotAction.SCANNING;
         this.finishRoboAction = finishRoboAction;
         this.actionProgress = 3f;
 
@@ -150,18 +156,18 @@ public class Robo {
 
     }
 
-    private Vector2 getRelativePosition(RoboRelativeDirection direction) {
+    private Vector2 getRelativePosition(RobotRelativeDirection direction) {
         float x = this.getX();
         float y = this.getY();
 
-        if(RoboRelativeDirection.FRONT  == direction ){
+        if(RobotRelativeDirection.FRONT  == direction ){
             if(this.direction == MapDirection.LEFT) x--;
             if(this.direction == MapDirection.RIGHT) x++;
             if(this.direction == MapDirection.UP) y++;
             if(this.direction == MapDirection.DOWN) y--;
             return new Vector2(x, y);
         }
-        if(RoboRelativeDirection.LEFT  == direction){
+        if(RobotRelativeDirection.LEFT  == direction){
             if(this.direction == MapDirection.LEFT) y--;
             if(this.direction == MapDirection.RIGHT) y++;
             if(this.direction == MapDirection.UP) x--;
@@ -169,7 +175,7 @@ public class Robo {
             return new Vector2(x, y);
         }
 
-        if(RoboRelativeDirection.RIGHT  == direction){
+        if(RobotRelativeDirection.RIGHT  == direction){
             if(this.direction == MapDirection.LEFT) y++;
             if(this.direction == MapDirection.RIGHT) y--;
             if(this.direction == MapDirection.UP) x++;
@@ -177,7 +183,7 @@ public class Robo {
             return new Vector2(x, y);
         }
 
-        if(RoboRelativeDirection.BACK  == direction){
+        if(RobotRelativeDirection.BACK  == direction){
             if(this.direction == MapDirection.LEFT) x++;
             if(this.direction == MapDirection.RIGHT) x--;
             if(this.direction == MapDirection.UP) y--;
@@ -193,11 +199,11 @@ public class Robo {
         if(this.currentAction != null){
             float actionPart = this.velocity * Gdx.graphics.getDeltaTime();
 
-            if(this.currentAction == RoboAction.MOVING && this.actionProgress > 0){
+            if(this.currentAction == RobotAction.MOVING && this.actionProgress > 0){
                 handleRobotMoveAction(actionPart);
             }
 
-            if(this.currentAction == RoboAction.COLLIDING && this.actionProgress > 0){
+            if(this.currentAction == RobotAction.COLLIDING && this.actionProgress > 0){
                 handleRobotCollidingAction(actionPart);
             }
 
@@ -233,7 +239,7 @@ public class Robo {
         
     }
 
-    private void handleRobotCollidingAction (float actionPart) {
+    private void handleRobotCollidingAction(float actionPart) {
 
         int factor = 1;
         if(this.actionProgress < 0.2f) factor = 1; else

@@ -16,12 +16,12 @@ public class ButtonSmall  extends Table{
         this.setBackground(new TextureRegionDrawable(AssetManager.button100x50));
         setTouchable(Touchable.enabled);
 
-        this.setSize(100, 50);
+        this.setSize(150, 50);
+        this.center();
         
-        LabelStyle style = new LabelStyle(AssetManager.font1, Color.WHITE);
+        LabelStyle style = new LabelStyle(AssetManager.font14, Color.WHITE);
         Label label = new Label(labelText, style);
         label.setAlignment(Align.center);
-        this.center();
 
         this.add(label).center().expandX();
     }

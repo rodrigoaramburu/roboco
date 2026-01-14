@@ -26,6 +26,7 @@ import br.dev.botecodigital.level.basic.BasicLevel02;
 import br.dev.botecodigital.level.basic.BasicLevel03;
 import br.dev.botecodigital.level.basic.BasicLevel04;
 import br.dev.botecodigital.level.basic.BasicLevel05;
+import br.dev.botecodigital.screen.levelscreen.LevelScreen;
 import br.dev.botecodigital.screen.uicomponents.Button;
 import br.dev.botecodigital.screen.uicomponents.ListItem;
 
@@ -85,7 +86,7 @@ public class SelectLevelScreen implements Screen {
             listContainer.row();
         });
 
-        Label labelLevel = new Label("Selecione um nível", new LabelStyle(AssetManager.font1, Color.WHITE));
+        Label labelLevel = new Label("Selecione um nível", new LabelStyle(AssetManager.font36, Color.WHITE));
         labelLevel.setFontScale(0.7f);
         labelLevel.setAlignment(Align.center);
         root.add(labelLevel)
