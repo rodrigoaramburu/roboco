@@ -104,11 +104,13 @@ public class SocketController {
             SocketHints socketHints = new SocketHints();
             try{
                 this.client = socketServer.accept(socketHints);
+                input = new BufferedReader( new InputStreamReader(client.getInputStream() ) );
+                out = new PrintWriter(client.getOutputStream(), true);
             }catch(GdxRuntimeException e){
                 Gdx.app.log("SOCKET_CONTROLLER", "erro no accept");
+                threadListening.interrupt();
+                return;
             }
-            input = new BufferedReader( new InputStreamReader(client.getInputStream() ) );
-            out = new PrintWriter(client.getOutputStream(), true);
 
             try{
                 
