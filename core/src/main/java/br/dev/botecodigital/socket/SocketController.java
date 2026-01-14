@@ -119,7 +119,7 @@ public class SocketController {
                 
                 String commandString;
                 SocketCommandRequest command;
-                while ( this.client.isConnected() && (commandString = input.readLine()) != null) {
+                while ( (commandString = input.readLine()) != null) {
 
                     try{
                         command = this.parseCommand(commandString);
@@ -130,6 +130,7 @@ public class SocketController {
 
                     queue.add( command );
                 }
+                this.disconnect();
             }catch(java.net.SocketException e){
                 Gdx.app.log("SOCKET_CONTROLLER", "O cliente desconectou abruptamente");
                 this.disconnect();
@@ -185,16 +186,15 @@ public class SocketController {
             if(command.command == SocketCommandRequest.Command.SYSTEM_SETUSERNAME){
                 this.clientIP = this.client.getRemoteAddress();
                 this.clientUsername = command.getValue();
-                this.send(SocketCommandResponse.success("SYSTEM_USERNAME_SETTED","Username \""+this.clientUsername+"\" was set successfully"));
+                this.send(
+                    SocketCommandResponse.success("SYSTEM_USERNAME_SETTED","Username \""+this.clientUsername+"\" foi configurado.")
+                );
             }else{
                 throw new SocketException("Username not set");
             }
         }catch(InvalidScoketCommandException e){
             send(SocketCommandResponse.error("SOCKET_INVALID_COMMAND", e.getMessage()));
         }
-        
-        
-        
     }
 
     public void send(SocketCommandResponse message){
@@ -226,7 +226,7 @@ public class SocketController {
     public void setOnStartListenning(SocketListener socketListener) {
         this.onStartListenningAction = socketListener;
     }
-
+    
 
     public void dispose() {
         this.client.dispose();
@@ -237,6 +237,8 @@ public class SocketController {
     public int getPort() {
         return this.port;
     }
+
+
 
     
 

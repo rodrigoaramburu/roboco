@@ -52,8 +52,6 @@ public class LevelScreen implements Screen {
 
     private DialogBox dialogBox;
 
-    
-
     public enum LevelStatus {
         WAITING,
         RUNNING,
@@ -171,6 +169,13 @@ public class LevelScreen implements Screen {
             currentUsername = SocketController.getInstance().getUsername();
             Gdx.graphics.setTitle("Usuário conectado: " + currentUsername);
             this.dialogBox.addMessage("Usuário conectado: " + currentUsername);
+            status = LevelStatus.RUNNING;
+        });
+
+        SocketController.getInstance().setOnDisconnectedAction( () -> {
+            currentUsername = SocketController.getInstance().getUsername();
+            Gdx.graphics.setTitle("Roboco");
+            this.dialogBox.addMessage("Usuário " + currentUsername+" desconetou.");
             status = LevelStatus.RUNNING;
         });
 
