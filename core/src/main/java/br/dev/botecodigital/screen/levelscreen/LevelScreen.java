@@ -1,5 +1,8 @@
 package br.dev.botecodigital.screen.levelscreen;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -162,7 +165,11 @@ public class LevelScreen implements Screen {
     private void initSocketController() {
         SocketController.getInstance().setOnStartListenning( () ->{
             int port = SocketController.getInstance().getPort();
-            this.dialogBox.addMessage("Aguardando conexão em "+NetworkUtils.getLocalIPAddress()+":"+port+"...");
+            this.dialogBox.addMessage("Aguardando conexão em :");
+            Map<String, String> interfaces = NetworkUtils.getInterfacesIp();
+            for(String name : interfaces.keySet()){
+                this.dialogBox.addMessage(name + ": " + interfaces.get(name) + ":" + port);
+            }
         });
 
         SocketController.getInstance().setOnConnectedAction( () -> {
