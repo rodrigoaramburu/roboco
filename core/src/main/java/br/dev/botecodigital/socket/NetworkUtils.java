@@ -16,6 +16,10 @@ public class NetworkUtils {
         
         Map<String, String> interfacesIp = new HashMap<>();
         
+        String ethernetIP = null;
+        String wifiIP = null;
+        String fallbackIP = null;
+
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements()) {
@@ -25,7 +29,10 @@ public class NetworkUtils {
                     continue;
 
                 String name = iface.getName().toLowerCase();
-        
+                Gdx.app.log("NETWORK", name);
+                // boolean isEthernet = name.startsWith("eth") || name.startsWith("en");
+                // boolean isWifi = name.startsWith("wlan") || name.startsWith("wl");
+
                 Enumeration<InetAddress> addresses = iface.getInetAddresses();
                 while (addresses.hasMoreElements()) {
                     InetAddress addr = addresses.nextElement();
@@ -35,12 +42,15 @@ public class NetworkUtils {
 
                     String ip = addr.getHostAddress();
                     interfacesIp.put(name, ip);
+                    Gdx.app.log("NETWORK", ip);
+                    Gdx.app.log("NETWORK", "------------------");
                     
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Gdx.app.log("NETWORK", interfacesIp.toString());
         return interfacesIp;
     }
 }
