@@ -88,9 +88,9 @@ public class SocketController {
             this.client.dispose();
             this.client = null;
         }
-        this.threadListening.interrupt();
-        this.serverThread.interrupt();
-        this.socketServer.dispose();
+        if(this.threadListening != null) this.threadListening.interrupt();
+        if(this.serverThread != null) this.serverThread.interrupt();
+        if(this.socketServer != null) this.socketServer.dispose();
         
     }
 

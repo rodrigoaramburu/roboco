@@ -1,6 +1,5 @@
 package br.dev.botecodigital.screen.levelscreen;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Game;

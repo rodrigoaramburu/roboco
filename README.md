@@ -141,4 +141,6 @@ Realiza a desconeção do cliente *socket*
 { "command": "SYSTEM_DISCONNECT"}
 ```
 
+## Carregando níveis personalizados
 
+Para carragar um [nível personalizado](docs/CRIANDO_NIVEIS.md) basta colocar o `.jar` criado dentro da pasta `levels` na raiz do projeto.

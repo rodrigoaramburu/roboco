@@ -20,7 +20,7 @@ public abstract class Level {
      * o segundo indice representa a coluna no caso o eixo X do mundo.
      * @return Tile[][]
      */
-    public abstract Tile[][] getWalls(); 
+    public abstract Tile[][] getObstacle(); 
 
     public abstract String getName();
 
@@ -41,7 +41,7 @@ public abstract class Level {
             }
         }
         
-        Tile[][] walls = this.getWalls();
+        Tile[][] walls = this.getObstacle();
         for(int row = 0; row < 10; row++ ){
             for(int col = 0; col < 10; col++ ){
                 if(walls[row][col] == null) continue;
@@ -61,7 +61,7 @@ public abstract class Level {
             return false;
         }
         
-        Tile[][] wallTile = this.getWalls();
+        Tile[][] wallTile = this.getObstacle();
         return wallTile[ 9 - (int)  y][(int) x] == null;
 
     }
@@ -71,7 +71,7 @@ public abstract class Level {
             return null;
         }
         
-        Tile[][] wallTile = this.getWalls();
+        Tile[][] wallTile = this.getObstacle();
         return wallTile[ 9 - (int)  y][(int) x];
     }
 

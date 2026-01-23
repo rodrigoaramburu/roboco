@@ -28,7 +28,7 @@ public class BasicLevel04 extends Level {
     }
 
     @Override
-    public Tile[][] getWalls() {
+    public Tile[][] getObstacle() {
         return new Tile[][]{
             {__BLANK__, __BLANK__, __BLANK__, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, FAC_W_12_, __BLANK__, __BLANK__},           
             {__BLANK__, __BLANK__, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__, __BLANK__, FAC_W_12_, __BLANK__, __BLANK__},           

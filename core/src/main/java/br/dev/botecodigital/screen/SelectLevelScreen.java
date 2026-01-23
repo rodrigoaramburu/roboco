@@ -1,5 +1,6 @@
 package br.dev.botecodigital.screen;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Game;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import br.dev.botecodigital.AssetManager;
+import br.dev.botecodigital.Configuration;
 import br.dev.botecodigital.level.Level;
 import br.dev.botecodigital.level.basic.BasicLevel01;
 import br.dev.botecodigital.level.basic.BasicLevel02;
@@ -43,13 +45,19 @@ public class SelectLevelScreen implements Screen {
     public SelectLevelScreen(Game game){
         this.game = game;
 
-        this.levels = List.of(
-            new BasicLevel01(),
-            new BasicLevel02(),
-            new BasicLevel03(),
-            new BasicLevel04(),
-            new BasicLevel05()
-        );
+        LoadLevel loadLevel = new LoadLevel();
+
+        this.levels = new ArrayList<Level>();
+ 
+        if(Configuration.getLevelBasicLoad()){
+            this.levels.add(new BasicLevel01());
+            this.levels.add(new BasicLevel02());
+            this.levels.add(new BasicLevel03());
+            this.levels.add(new BasicLevel04());
+            this.levels.add(new BasicLevel05());
+        }
+ 
+        this.levels.addAll( loadLevel.load( Configuration.getLevelExternalPath() ) );
     }
 
     @Override
