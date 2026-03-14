@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import br.dev.botecodigital.AssetManager;
 import br.dev.botecodigital.level.Level;
-import br.dev.botecodigital.level.Tile;
+import br.dev.botecodigital.level.tiles.Tile;
 
 public class Robot {
 

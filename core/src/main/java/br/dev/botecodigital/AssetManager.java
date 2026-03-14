@@ -12,6 +12,7 @@ public class AssetManager {
     public static BitmapFont font36;
     public static BitmapFont font20;
     public static BitmapFont font14;
+    public static BitmapFont fontTile;
 
     public static Texture dialogBox;
     public static Texture button100x50;
@@ -62,6 +63,16 @@ public class AssetManager {
         params3.borderColor = Color.BLACK;
         font14 = fontGeneratorRobotoRegular.generateFont(params2);
         font14.setUseIntegerPositions(false);
+
+
+        FreeTypeFontParameter params4 = new FreeTypeFontParameter();
+        params4.size = 16;
+        params4.color = Color.WHITE;
+        params4.borderWidth = 1;
+        params4.borderColor = Color.BLACK;
+        fontTile = fontGeneratorRobotoRegular.generateFont(params4);
+        fontTile.setUseIntegerPositions(false);
+        fontTile.getData().setScale(1f / 50f);
         
 
     }

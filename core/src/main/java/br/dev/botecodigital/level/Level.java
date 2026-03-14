@@ -1,8 +1,12 @@
 package br.dev.botecodigital.level;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+import br.dev.botecodigital.level.tiles.Tile;
 import br.dev.botecodigital.robot.Robot;
 import br.dev.botecodigital.robot.Robot.MapDirection;
 
@@ -13,7 +17,14 @@ public abstract class Level {
      * o segundo indice representa a coluna no caso o eixo X do mundo.
      * @return Tile[][]
      */
-    public abstract Tile[][] getFloor(); 
+    public abstract Tile[][] getFloor();
+    
+    /**
+     * Retorna um mapa com as posicoes (Vector2) e os Tile que serão desenhados nas posições. O eixo Y começa na parte inferior.
+     * Marcadores não são bloqueantes.
+     * @return
+     */
+    public abstract Map<Vector2, Tile> getMarkers(); 
 
     /**
      * Retorna uma matriz onde o primeiro indice representa a linha no caso o eixo Y do mundo e
@@ -31,21 +42,30 @@ public abstract class Level {
     public abstract MapDirection getRobotDirection();
 
     public abstract boolean isFinished(Robot robot);
+    
+    public abstract void dispose();
 
-    public void render(SpriteBatch batch){
+    public void render(SpriteBatch batch, float stateTime){
         Tile[][] floor = this.getFloor();
         for(int row = 0; row < 10; row++ ){
             for(int col = 0; col < 10; col++ ){
                 if(floor[row][col] == null) continue;
-                floor[row][col].draw(batch, col+2, 9 - row + 2);
+                floor[row][col].draw(batch, col+2, 9 - row + 2, stateTime);
             }
         }
+
+        for(Entry<Vector2, Tile> entry : this.getMarkers().entrySet()){
+            Vector2 position = entry.getKey();
+            Tile tile = entry.getValue();
+            tile.draw(batch, position.x + 2, position.y + 2 , stateTime);
+        }
+
         
         Tile[][] walls = this.getObstacle();
         for(int row = 0; row < 10; row++ ){
             for(int col = 0; col < 10; col++ ){
                 if(walls[row][col] == null) continue;
-                walls[row][col].draw(batch, col+2, 9 - row + 2);
+                walls[row][col].draw(batch, col+2, 9 - row + 2, stateTime);
             }
         }
     }

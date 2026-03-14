@@ -28,6 +28,7 @@ import br.dev.botecodigital.level.basic.BasicLevel02;
 import br.dev.botecodigital.level.basic.BasicLevel03;
 import br.dev.botecodigital.level.basic.BasicLevel04;
 import br.dev.botecodigital.level.basic.BasicLevel05;
+import br.dev.botecodigital.level.basic.TestFabricaTiles;
 import br.dev.botecodigital.screen.levelscreen.LevelScreen;
 import br.dev.botecodigital.screen.uicomponents.Button;
 import br.dev.botecodigital.screen.uicomponents.ListItem;
@@ -48,6 +49,9 @@ public class SelectLevelScreen implements Screen {
         LoadLevel loadLevel = new LoadLevel();
 
         this.levels = new ArrayList<Level>();
+
+        // this.levels.add(new TestFabricaTiles());
+        // this.levels.add(new TestFabricaTiles2());
  
         if(Configuration.getLevelBasicLoad()){
             this.levels.add(new BasicLevel01());

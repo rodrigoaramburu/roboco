@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import br.dev.botecodigital.AssetManager;
 import br.dev.botecodigital.level.Level;
-import br.dev.botecodigital.level.TileManager;
+import br.dev.botecodigital.level.tiles.TileManager;
 import br.dev.botecodigital.robot.Robot;
 import br.dev.botecodigital.screen.SelectLevelScreen;
 import br.dev.botecodigital.screen.levelscreen.commands.RobotMoveCommandProcessor;
@@ -53,6 +53,8 @@ public class LevelScreen implements Screen {
     private LevelCommandProcessor commandProcessor;
 
     private DialogBox dialogBox;
+
+    private float stateTime;
 
     public enum LevelStatus {
         WAITING,
@@ -131,6 +133,8 @@ public class LevelScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        
+        this.stateTime += delta;
 
         this.viewport.apply();
         this.camera.update();
@@ -147,7 +151,7 @@ public class LevelScreen implements Screen {
 
         this.batch.begin();
 
-        this.level.render(batch);
+        this.level.render(batch, this.stateTime);
         this.drawSide();
         this.robot.render(batch);
 
@@ -199,7 +203,7 @@ public class LevelScreen implements Screen {
                 return;
             }
                         
-            // Após nivel vizalizado robo não pode receber mais comandos
+            // Após nivel finalizado robo não pode receber mais comandos
             if(isLevelFinished()){
                 SocketController.getInstance().send(
                     SocketCommandResponse.error("LEVEL_FINISHED", "O level já foi finalizaddo com o status: "+this.status)
@@ -255,6 +259,7 @@ public class LevelScreen implements Screen {
         SocketController.getInstance().disconnect();
         SocketController.getInstance().dispose();
         TileManager.dispose();
+        this.level.dispose();
     }
 
     
